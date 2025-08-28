@@ -520,7 +520,7 @@
             <h3 class="section-title text-4xl font-bold text-center mb-12"><span class="text-green-400">04.</span> <span class="title-text">Projects Showcase</span></h3>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
                 <div class="project-card rounded-lg shadow-xl overflow-hidden cursor-pointer transform hover:scale-105 transition-all duration-300" data-project="travelApp">
-                    <img src="https://placehold.co/400x250/CCCCCC/333333?text=Travel+App" alt="Travel App Screenshot" class="w-full h-40 object-cover">
+                    <img src="https://placehold.co/400x250/CCCCCC/333333?text=Travel+App" alt="Travel App Screenshot" class="w-full h-40 object-cover" onerror="this.onerror=null;this.src='https://placehold.co/400x250/30363d/c9d1d9?text=Image+Not+Found';">
                     <div class="p-6">
                         <h4 class="text-xl font-semibold text-white project-title-bg">Mobile App for Intercity Travel</h4>
                         <p class="text-gray-400 mb-4">Full-featured travel application with live map tracking and booking functionalities.</p>
@@ -532,7 +532,7 @@
                     </div>
                 </div>
                 <div class="project-card rounded-lg shadow-xl overflow-hidden cursor-pointer transform hover:scale-105 transition-all duration-300" data-project="bankingSystem">
-                    <img src="https://placehold.co/400x250/CCCCCC/333333?text=Banking+System" alt="Banking System Screenshot" class="w-full h-40 object-cover">
+                    <img src="https://placehold.co/400x250/CCCCCC/333333?text=Banking+System" alt="Banking System Screenshot" class="w-full h-40 object-cover" onerror="this.onerror=null;this.src='https://placehold.co/400x250/30363d/c9d1d9?text=Image+Not+Found';">
                     <div class="p-6">
                         <h4 class="text-xl font-semibold text-white project-title-bg">Banking System (Python/MySQL)</h4>
                         <p class="text-gray-400 mb-4">Secure and robust backend for account management and transactions.</p>
@@ -544,7 +544,7 @@
                     </div>
                 </div>
                 <div class="project-card rounded-lg shadow-xl overflow-hidden cursor-pointer transform hover:scale-105 transition-all duration-300" data-project="dataPipeline">
-                    <img src="https://placehold.co/400x250/CCCCCC/333333?text=Data+Pipeline" alt="Data Pipeline Screenshot" class="w-full h-40 object-cover">
+                    <img src="https://placehold.co/400x250/CCCCCC/333333?text=Data+Pipeline" alt="Data Pipeline Screenshot" class="w-full h-40 object-cover" onerror="this.onerror=null;this.src='https://placehold.co/400x250/30363d/c9d1d9?text=Image+Not+Found';">
                     <div class="p-6">
                         <h4 class="text-xl font-semibold text-white project-title-bg">Healthcare Data Quality Pipeline</h4>
                         <p class="text-gray-400 mb-4">A scalable Python-based data quality assurance pipeline for healthcare datasets.</p>
@@ -556,7 +556,7 @@
                     </div>
                 </div>
                 <div class="project-card rounded-lg shadow-xl overflow-hidden cursor-pointer transform hover:scale-105 transition-all duration-300" data-project="githubGames">
-                    <img src="https://placehold.co/400x250/CCCCCC/333333?text=Go-kart+Game" alt="Go-kart Game Screenshot" class="w-full h-40 object-cover">
+                    <img src="https://placehold.co/400x250/CCCCCC/333333?text=Go-kart+Game" alt="Go-kart Game Screenshot" class="w-full h-40 object-cover" onerror="this.onerror=null;this.src='https://placehold.co/400x250/30363d/c9d1d9?text=Image+Not+Found';">
                     <div class="p-6">
                         <h4 class="text-xl font-semibold text-white project-title-bg">Go-kart Game (GitHub)</h4>
                         <p class="text-gray-400 mb-4">Developed a public Go-kart game, showcasing game development principles.</p>
@@ -566,8 +566,8 @@
                         </div>
                     </div>
                 </div>
-                 <div class="project-card rounded-lg shadow-xl overflow-hidden cursor-pointer transform hover:scale-105 transition-all duration-300" data-project="githubMedicalTriage">
-                    <img src="https://placehold.co/400x250/CCCCCC/333333?text=Medical+Triage" alt="Medical Triage System Screenshot" class="w-full h-40 object-cover">
+                <div class="project-card rounded-lg shadow-xl overflow-hidden cursor-pointer transform hover:scale-105 transition-all duration-300" data-project="githubMedicalTriage">
+                    <img src="https://placehold.co/400x250/CCCCCC/333333?text=Medical+Triage" alt="Medical Triage System Screenshot" class="w-full h-40 object-cover" onerror="this.onerror=null;this.src='https://placehold.co/400x250/30363d/c9d1d9?text=Image+Not+Found';">
                     <div class="p-6">
                         <h4 class="text-xl font-semibold text-white project-title-bg">Medical Triage System (GitHub)</h4>
                         <p class="text-gray-400 mb-4">Developed a public medical triage system using Python.</p>
@@ -720,7 +720,8 @@
             <h3 class="section-title text-4xl font-bold text-center mb-12"><span class="text-green-400">06.</span> <span class="title-text">AI Resume Assistant</span></h3>
             <div class="max-w-3xl mx-auto text-gray-300 bg-gray-800 p-8 rounded-lg shadow-xl border border-gray-700 box-style-nav">
                 <p class="mb-6">Paste a job description or your resume content below to get AI-powered feedback, including an ATS score, keyword suggestions, and actionable advice.</p>
-                <textarea id="resumeInput" class="w-full p-4 rounded-lg bg-gray-700 text-gray-300 border border-gray-600 focus:outline-none focus:border-green-400 h-40 mb-4" placeholder="e.g., 'Seeking a Software Engineer role...' or paste your full resume content here."></textarea>
+                <textarea id="resumeInput" class="w-full p-4 rounded-lg bg-gray-700 text-gray-300 border border-gray-600 focus:outline-none focus:border-green-400 h-40 mb-2" placeholder="Paste your resume content or a job description here. (e.g., 'Seeking a Software Engineer role...' or full resume text)"></textarea>
+                <p class="text-sm text-gray-400 mb-4">Note: This assistant processes pasted text, it does not support file uploads.</p>
                 <button id="getResumeFeedbackBtn" class="main-button text-white px-5 py-2 rounded-lg transition shadow-lg flex items-center justify-center space-x-2 w-full md:w-auto">
                     <span id="feedbackButtonText">✨ Get Resume Feedback</span>
                     <div id="feedbackSpinner" class="spinner hidden"></div>
@@ -754,9 +755,12 @@
                 <p class="mb-4">I'm currently seeking new opportunities and welcome any inquiries or collaborations. Feel free to reach out!</p>
                 <p class="mb-4">Open to full-time or internship conversations—available post-graduation.</p>
             </div>
-            <a href="mailto:22JE0606@IITISM.AC.IN" class="block mx-auto main-button text-white px-8 py-4 rounded-lg text-lg font-semibold transition shadow-lg w-fit flex items-center justify-center space-x-2">
-                <span>Say Hello!</span> <span class="text-xl">👋</span>
-            </a>
+            <!-- Corrected Positioning for "Say Hello!" button -->
+            <div class="flex justify-center mt-8">
+                <a href="mailto:22JE0606@IITISM.AC.IN" class="main-button text-white px-8 py-4 rounded-lg text-lg font-semibold transition shadow-lg flex items-center justify-center space-x-2">
+                    <span>Say Hello!</span> <span class="text-xl">👋</span>
+                </a>
+            </div>
         </section>
 
     </main>
@@ -1322,20 +1326,26 @@
                 getResumeFeedbackBtn.addEventListener('click', async () => {
                     playClickSound();
                     const resumeText = resumeInput ? resumeInput.value.trim() : '';
+                    
+                    // Always show the output container when the button is clicked
+                    if (resumeFeedbackOutput) resumeFeedbackOutput.classList.remove('hidden');
+
                     if (!resumeText) {
                         if (atsScoreOutput) atsScoreOutput.textContent = "N/A";
                         if (summaryOutput) summaryOutput.textContent = "Please enter some text to get feedback.";
-                        if (keywordSuggestionsOutput) keywordSuggestionsOutput.innerHTML = '';
-                        if (formattingSuggestionsOutput) formattingSuggestionsOutput.innerHTML = '';
-                        if (actionableFeedbackOutput) actionableFeedbackOutput.innerHTML = '';
-                        if (resumeFeedbackOutput) resumeFeedbackOutput.classList.remove('hidden');
+                        if (keywordSuggestionsOutput) keywordSuggestionsOutput.innerHTML = '<li>No suggestions.</li>';
+                        if (formattingSuggestionsOutput) formattingSuggestionsOutput.innerHTML = '<li>No suggestions.</li>';
+                        if (actionableFeedbackOutput) actionableFeedbackOutput.innerHTML = '<li>No suggestions.</li>';
+                        if (feedbackButtonText) feedbackButtonText.textContent = '✨ Get Resume Feedback'; // Reset button text
+                        if (feedbackSpinner) feedbackSpinner.classList.add('hidden'); // Hide spinner
+                        if (getResumeFeedbackBtn) getResumeFeedbackBtn.disabled = false; // Enable button
                         return;
                     }
 
                     if (feedbackButtonText) feedbackButtonText.textContent = 'Analyzing...';
                     if (feedbackSpinner) feedbackSpinner.classList.remove('hidden');
-                    if (resumeFeedbackOutput) resumeFeedbackOutput.classList.remove('hidden');
                     
+                    // Clear previous output while analyzing
                     if (atsScoreOutput) atsScoreOutput.textContent = "Analyzing...";
                     if (summaryOutput) summaryOutput.textContent = "";
                     if (keywordSuggestionsOutput) keywordSuggestionsOutput.innerHTML = '';
@@ -1343,7 +1353,7 @@
                     if (actionableFeedbackOutput) actionableFeedbackOutput.innerHTML = '';
 
 
-                    const prompt = `Analyze the following resume content for ATS compatibility, keyword relevance, and overall impact. Provide an ATS score out of 100, a brief summary, keyword suggestions, formatting suggestions, and actionable feedback. Respond in JSON format according to the provided schema. Resume content: "${resumeText}"`;
+                    const prompt = `Analyze the following resume content for ATS compatibility, keyword relevance, and overall impact. Provide an ATS score out of 100, a brief summary, keyword suggestions, formatting suggestions, and actionable feedback. Strictly adhere to the following JSON schema in your response. Resume content: "${resumeText}"`;
 
                     const aiResponse = await callGeminiApi(prompt, summaryOutput, feedbackSpinner, getResumeFeedbackBtn, resumeAnalysisSchema);
                     
@@ -1379,6 +1389,9 @@
                         if (feedbackButtonText) feedbackButtonText.textContent = 'Try Again';
                         if (atsScoreOutput) atsScoreOutput.textContent = "N/A";
                         if (summaryOutput) summaryOutput.textContent = "Failed to generate detailed feedback. Please try again.";
+                        if (keywordSuggestionsOutput) keywordSuggestionsOutput.innerHTML = '<li>Error fetching suggestions.</li>';
+                        if (formattingSuggestionsOutput) formattingSuggestionsOutput.innerHTML = '<li>Error fetching suggestions.</li>';
+                        if (actionableFeedbackOutput) actionableFeedbackOutput.innerHTML = '<li>Error fetching suggestions.</li>';
                     }
                     if (getResumeFeedbackBtn) getResumeFeedbackBtn.disabled = false;
                 });
