@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Naman Meena | Software Developer</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -12,7 +14,17 @@
         Dark Mode: Dark Slate / Green / White
         Light Mode: White / Black / Orange
     -->
-    <!-- Application Structure Plan: A full-screen, vertical-scrolling single-page application (SPA) with distinct, thematic sections (Hero, About, Skills, Experience, Projects, Certifications, Contact). This structure mirrors the elegant, narrative flow of chanhdai.com, guiding the user linearly while providing clear navigation. Each section is designed to be a prominent visual block, fostering focused engagement. Interactive elements like the typing effect, active navigation highlighting, and project modals enhance user exploration without clutter. -->
+    <!-- Application Structure Plan: A full-screen, vertical-scrolling single-page application (SPA) with distinct, thematic sections (Hero, About, Skills, Experience, Projects, Certifications, Contact, Resume Assistant). This structure mirrors the elegant, narrative flow of chanhdai.com, guiding the user linearly while providing clear navigation. Each section is designed to be a prominent visual block, fostering focused engagement. Interactive elements like the typing effect, active navigation highlighting, skills chart, and project modals enhance user exploration without clutter. -->
+    <!-- Visualization & Content Choices:
+        - Hero Text -> Typing Effect (JS) -> To create an engaging and dynamic introduction that immediately captures attention, mimicking the modern web aesthetic.
+        - Navigation -> Active Link Highlighting (JS) -> To provide clear visual feedback on the user's current position within the SPA, improving wayfinding.
+        - Skills -> Bar Chart (Chart.js) & AI-Generated Explanations (Gemini API) -> To visually represent technical proficiencies and provide on-demand, concise technical elaborations for each skill, demonstrating depth of knowledge.
+        - Experience & Certifications -> Vertical Timeline with Accordion/Detail Toggle (HTML/CSS/JS) -> To organize chronological data efficiently. Users can expand sections for details, keeping the initial view clean and preventing information overload.
+        - Projects -> Clickable Cards with Modal Pop-ups & AI-Generated Descriptions (Gemini API) -> To showcase diverse projects with a brief overview on cards and provide in-depth, AI-enhanced details on demand, enriching the project narrative.
+        - AI Resume Assistant -> Textarea Input & AI-Generated Feedback (Gemini API) -> To provide a practical demonstration of AI's capability in offering resume critique and ATS optimization advice.
+        - GitHub/LinkedIn Icons -> Unicode Characters -> To provide direct, recognizable links to professional profiles without external image requests, aligning with a clean, performant design.
+        - General Layout -> Full-width, Dynamic Theme (Dark/Light), Smooth Scrolling, Audio Feedback -> To deliver a premium, modern user experience consistent with the reference site, with user-selectable themes and subtle auditory cues for interaction. High contrast ensures readability in both modes.
+    -->
     <!-- CONFIRMATION: NO SVG graphics used (except for pre-existing GitHub/LinkedIn icons which are common practice for functional links; for new icons, only Unicode/HTML is used). NO Mermaid JS used. -->
     <style>
         /* Base variables (Dark Mode Default) */
@@ -26,6 +38,9 @@
             --border-color: #30363d;
             --header-bg: rgba(13, 17, 23, 0.95);
             --header-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+            --chart-bg: rgba(22, 27, 34, 0.6); /* Adjusted for more transparency */
+            --chart-grid: #30363d;
+            --chart-ticks: #c9d1d9;
             --modal-bg: rgba(22, 27, 34, 0.6); /* Adjusted for more transparency */
             --code-bg: rgba(1, 4, 9, 0.6); /* Adjusted for more transparency */
             --gradient-start: #6EE7B7; /* Light Green */
@@ -37,6 +52,7 @@
             --button-bg: var(--accent-color);
             --button-hover-bg: var(--accent-hover);
             --grid-line-color: rgba(48, 54, 61, 0.3); /* Subtle dark grid lines - increased opacity */
+            --background-content-color: rgba(48, 54, 61, 0.2); /* Increased opacity for dark mode */
         }
 
         /* Light Mode Variables */
@@ -50,6 +66,9 @@
             --border-color: #e0e0e0;
             --header-bg: rgba(255, 255, 255, 0.95);
             --header-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            --chart-bg: rgba(255, 255, 255, 0.6); /* Adjusted for more transparency */
+            --chart-grid: #e0e0e0;
+            --chart-ticks: #333333;
             --modal-bg: rgba(255, 255, 255, 0.6); /* Adjusted for more transparency */
             --code-bg: rgba(240, 240, 240, 0.6); /* Adjusted for more transparency */
             --gradient-start: #ffa500; /* Orange Start */
@@ -61,6 +80,7 @@
             --button-bg: var(--accent-color);
             --button-hover-bg: var(--accent-hover);
             --grid-line-color: rgba(224, 224, 224, 0.5); /* Subtle light grid lines */
+            --background-content-color: rgba(48, 54, 61, 0.3); /* Increased opacity for light mode */
         }
 
         body {
@@ -75,6 +95,30 @@
             background-size: 20px 20px; /* Adjust grid spacing here */
             position: relative; /* For the pseudo-element */
             min-height: 100vh;
+        }
+
+        #background-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            overflow: hidden;
+            padding: 2rem;
+            transition: color 0.3s ease;
+        }
+
+        #background-overlay span {
+            position: absolute;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.8rem;
+            line-height: 1.2;
+            color: var(--background-content-color);
+            white-space: pre;
+            opacity: 0; /* Initial opacity */
+            transition: opacity 0.5s ease-out; /* Smooth fade in */
         }
 
         h1, h2, h3, h4 {
@@ -95,14 +139,30 @@
             background-clip: text;
             color: transparent; /* Fallback */
         }
-        .experience-details, .certification-details {
+        .experience-details, .certification-details, .skill-explanation-content {
             max-height: 0;
             overflow: hidden;
             transition: max-height 0.5s ease-out;
         }
-        .experience-details.active, .certification-details.active {
+        .experience-details.active, .certification-details.active, .skill-explanation-content.active {
             max-height: 500px; /* Adjust based on max content height */
             transition: max-height 0.5s ease-in;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 400px;
+            max-height: 50vh;
+            padding: 1rem;
+            background-color: var(--chart-bg);
+            border-radius: 0.75rem;
+            border: 1px solid var(--border-color);
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
         }
         .modal-overlay {
             transition: opacity 0.3s ease;
@@ -174,6 +234,8 @@
     </style>
 </head>
 <body class="antialiased">
+    <div id="background-overlay"></div>
+
     <!-- Header & Navigation -->
     <header id="mainHeader" class="bg-transparent fixed top-0 left-0 w-full z-40 transition-all duration-300">
         <div class="container mx-auto px-6 py-4 flex justify-between items-center">
@@ -185,6 +247,7 @@
                 <a href="#experience" class="nav-link text-gray-400 hover:text-green-400 transition">Experience</a>
                 <a href="#projects" class="nav-link text-gray-400 hover:text-green-400 transition">Projects</a>
                 <a href="#certifications" class="nav-link text-gray-400 hover:text-green-400 transition">Certifications</a>
+                <a href="#resume-assistant" class="nav-link text-gray-400 hover:text-green-400 transition">Resume AI</a>
                 <a href="#contact" class="nav-link text-gray-400 hover:text-green-400 transition">Contact</a>
             </nav>
             <button id="themeToggle" class="text-gray-400 hover:text-green-400 transition ml-4 p-2 rounded-full focus:outline-none focus:ring-2 focus:ring-green-400">
@@ -224,45 +287,82 @@
         <!-- Skills Section -->
         <section id="skills" class="py-20 md:py-32 container mx-auto px-6 scroll-mt-24">
             <h3 class="section-title text-4xl font-bold text-center mb-12"><span class="text-green-400">02.</span> <span class="title-text">Technical Skills</span></h3>
-            <div class="max-w-3xl mx-auto bg-gray-800 p-8 rounded-lg shadow-xl border border-gray-700 box-style-nav">
-                <ul class="space-y-4 text-gray-300">
-                    <li class="flex items-start flex-col">
-                        <div class="flex items-center w-full justify-between">
-                            <span class="font-semibold text-green-400 w-32 shrink-0">Languages:</span>
-                            <span>Python (NumPy, Pandas, TensorFlow/Keras), Java, C, C++, Dart, SQL, HTML/CSS</span>
-                        </div>
-                    </li>
-                    <li class="flex items-start flex-col">
-                        <div class="flex items-center w-full justify-between">
-                            <span class="font-semibold text-green-400 w-32 shrink-0">Backend:</span>
-                            <span>MySQL, Firebase (Auth, Firestore, Realtime DB), RESTful APIs</span>
-                        </div>
-                    </li>
-                    <li class="flex items-start flex-col">
-                        <div class="flex items-center w-full justify-between">
-                            <span class="font-semibold text-green-400 w-32 shrink-0">Mobile Dev:</span>
-                            <span>Flutter, Android Studio, Google Maps API</span>
-                        </div>
-                    </li>
-                    <li class="flex items-start flex-col">
-                        <div class="flex items-center w-full justify-between">
-                            <span class="font-semibold text-green-400 w-32 shrink-0">Cloud & Tools:</span>
-                            <span>GCP, Git, GitHub, VS Code</span>
-                        </div>
-                    </li>
-                    <li class="flex items-start flex-col">
-                        <div class="flex items-center w-full justify-between">
-                            <span class="font-semibold text-green-400 w-32 shrink-0">Concepts:</span>
-                            <span>OOP, Data Structures & Algorithms, System Design, Machine Learning, Image Processing</span>
-                        </div>
-                    </li>
-                    <li class="flex items-start flex-col">
-                        <div class="flex items-center w-full justify-between">
-                            <span class="font-semibold text-green-400 w-32 shrink-0">Data & Business:</span>
-                            <span>Excel, Data Visualization, Market Analysis, Project Management</span>
-                        </div>
-                    </li>
-                </ul>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center max-w-5xl mx-auto">
+                <div class="bg-gray-800 p-8 rounded-lg shadow-xl border border-gray-700 box-style-nav">
+                    <ul class="space-y-4 text-gray-300">
+                        <li class="flex items-start flex-col">
+                            <div class="flex items-center w-full justify-between cursor-pointer skill-header" data-skill="Python">
+                                <span class="font-semibold text-green-400 w-32 shrink-0">Languages:</span>
+                                <span>Python (NumPy, Pandas, TensorFlow/Keras), Java, C, C++, Dart, SQL, HTML/CSS</span>
+                                <button class="ml-auto text-green-400 hover:text-green-500 text-sm explain-skill-btn" data-skill="Python">✨ Explain</button>
+                            </div>
+                            <div class="skill-explanation-content hidden mt-2 pl-4 text-gray-400 w-full min-h-[50px] relative">
+                                <p class="skill-explanation-text"></p>
+                                <div class="explanation-spinner spinner hidden absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"></div>
+                            </div>
+                        </li>
+                        <li class="flex items-start flex-col">
+                            <div class="flex items-center w-full justify-between cursor-pointer skill-header" data-skill="Backend">
+                                <span class="font-semibold text-green-400 w-32 shrink-0">Backend:</span>
+                                <span>MySQL, Firebase (Auth, Firestore, Realtime DB), RESTful APIs</span>
+                                <button class="ml-auto text-green-400 hover:text-green-500 text-sm explain-skill-btn" data-skill="Backend">✨ Explain</button>
+                            </div>
+                            <div class="skill-explanation-content hidden mt-2 pl-4 text-gray-400 w-full min-h-[50px] relative">
+                                <p class="skill-explanation-text"></p>
+                                <div class="explanation-spinner spinner hidden absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"></div>
+                            </div>
+                        </li>
+                        <li class="flex items-start flex-col">
+                            <div class="flex items-center w-full justify-between cursor-pointer skill-header" data-skill="Mobile Development">
+                                <span class="font-semibold text-green-400 w-32 shrink-0">Mobile Dev:</span>
+                                <span>Flutter, Android Studio, Google Maps API</span>
+                                <button class="ml-auto text-green-400 hover:text-green-500 text-sm explain-skill-btn" data-skill="Mobile Development">✨ Explain</button>
+                            </div>
+                            <div class="skill-explanation-content hidden mt-2 pl-4 text-gray-400 w-full min-h-[50px] relative">
+                                <p class="skill-explanation-text"></p>
+                                <div class="explanation-spinner spinner hidden absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"></div>
+                            </div>
+                        </li>
+                        <li class="flex items-start flex-col">
+                            <div class="flex items-center w-full justify-between cursor-pointer skill-header" data-skill="Cloud & Tools">
+                                <span class="font-semibold text-green-400 w-32 shrink-0">Cloud & Tools:</span>
+                                <span>GCP, Git, GitHub, VS Code</span>
+                                <button class="ml-auto text-green-400 hover:text-green-500 text-sm explain-skill-btn" data-skill="Cloud & Tools">✨ Explain</button>
+                            </div>
+                            <div class="skill-explanation-content hidden mt-2 pl-4 text-gray-400 w-full min-h-[50px] relative">
+                                <p class="skill-explanation-text"></p>
+                                <div class="explanation-spinner spinner hidden absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"></div>
+                            </div>
+                        </li>
+                        <li class="flex items-start flex-col">
+                            <div class="flex items-center w-full justify-between cursor-pointer skill-header" data-skill="Concepts">
+                                <span class="font-semibold text-green-400 w-32 shrink-0">Concepts:</span>
+                                <span>OOP, Data Structures & Algorithms, System Design, Machine Learning, Image Processing</span>
+                                <button class="ml-auto text-green-400 hover:text-green-500 text-sm explain-skill-btn" data-skill="Concepts">✨ Explain</button>
+                            </div>
+                            <div class="skill-explanation-content hidden mt-2 pl-4 text-gray-400 w-full min-h-[50px] relative">
+                                <p class="skill-explanation-text"></p>
+                                <div class="explanation-spinner spinner hidden absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"></div>
+                            </div>
+                        </li>
+                        <li class="flex items-start flex-col">
+                            <div class="flex items-center w-full justify-between cursor-pointer skill-header" data-skill="Data & Business">
+                                <span class="font-semibold text-green-400 w-32 shrink-0">Data & Business:</span>
+                                <span>Excel, Data Visualization, Market Analysis, Project Management</span>
+                                <button class="ml-auto text-green-400 hover:text-green-500 text-sm explain-skill-btn" data-skill="Data & Business">✨ Explain</button>
+                            </div>
+                            <div class="skill-explanation-content hidden mt-2 pl-4 text-gray-400 w-full min-h-[50px] relative">
+                                <p class="skill-explanation-text"></p>
+                                <div class="explanation-spinner spinner hidden absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"></div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <div>
+                    <div class="chart-container">
+                        <canvas id="skillsChart"></canvas>
+                    </div>
+                </div>
             </div>
         </section>
 
@@ -512,181 +612,24 @@
             </div>
         </section>
 
-        <!-- Projects Section -->
-        <section id="projects" class="py-20 md:py-32 container mx-auto px-6 scroll-mt-24">
-            <h3 class="section-title text-4xl font-bold text-center mb-12"><span class="text-green-400">04.</span> <span class="title-text">Projects Showcase</span></h3>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
-                <div class="bg-gray-800 rounded-lg shadow-xl border border-gray-700 overflow-hidden project-card cursor-pointer transform hover:scale-105 transition-all duration-300 box-style-nav" data-project="travelApp">
-                    <div class="p-6">
-                        <h4 class="text-xl font-semibold text-white">Mobile App for Intercity Travel</h4>
-                        <p class="text-gray-400 mb-4">Full-featured travel application with live map tracking and booking functionalities.</p>
-                        <div class="flex flex-wrap gap-2 text-sm font-mono">
-                            <span class="bg-gray-700 text-green-400 px-2.5 py-0.5 rounded">Flutter</span>
-                            <span class="bg-gray-700 text-green-400 px-2.5 py-0.5 rounded">Dart</span>
-                            <span class="bg-gray-700 text-green-400 px-2.5 py-0.5 rounded">Google Maps API</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="bg-gray-800 rounded-lg shadow-xl border border-gray-700 overflow-hidden project-card cursor-pointer transform hover:scale-105 transition-all duration-300 box-style-nav" data-project="bankingSystem">
-                    <div class="p-6">
-                        <h4 class="text-xl font-semibold text-white">Banking System (Python/MySQL)</h4>
-                        <p class="text-gray-400 mb-4">Secure and robust backend for account management and transactions.</p>
-                        <div class="flex flex-wrap gap-2 text-sm font-mono">
-                            <span class="bg-gray-700 text-green-400 px-2.5 py-0.5 rounded">Python</span>
-                            <span class="bg-gray-700 text-green-400 px-2.5 py-0.5 rounded">MySQL</span>
-                            <span class="bg-gray-700 text-green-400 px-2.5 py-0.5 rounded">ACID Compliance</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="bg-gray-800 rounded-lg shadow-xl border border-gray-700 overflow-hidden project-card cursor-pointer transform hover:scale-105 transition-all duration-300 box-style-nav" data-project="dataPipeline">
-                    <div class="p-6">
-                        <h4 class="text-xl font-semibold text-white">Healthcare Data Quality Pipeline</h4>
-                        <p class="text-gray-400 mb-4">A scalable Python-based data quality assurance pipeline for healthcare datasets.</p>
-                        <div class="flex flex-wrap gap-2 text-sm font-mono">
-                            <span class="bg-gray-700 text-green-400 px-2.5 py-0.5 rounded">Python</span>
-                            <span class="bg-gray-700 text-green-400 px-2.5 py-0.5 rounded">Pandas</span>
-                            <span class="bg-gray-700 text-green-400 px-2.5 py-0.5 rounded">Data Quality</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="bg-gray-800 rounded-lg shadow-xl border border-gray-700 overflow-hidden project-card cursor-pointer transform hover:scale-105 transition-all duration-300 box-style-nav" data-project="githubGames">
-                    <div class="p-6">
-                        <h4 class="text-xl font-semibold text-white">Go-kart Game (GitHub)</h4>
-                        <p class="text-gray-400 mb-4">Developed a public Go-kart game, showcasing game development principles.</p>
-                        <div class="flex flex-wrap gap-2 text-sm font-mono">
-                            <span class="bg-gray-700 text-green-400 px-2.5 py-0.5 rounded">Game Dev</span>
-                            <span class="bg-gray-700 text-green-400 px-2.5 py-0.5 rounded">Physics Simulation</span>
-                        </div>
-                    </div>
-                </div>
-                 <div class="bg-gray-800 rounded-lg shadow-xl border border-gray-700 overflow-hidden project-card cursor-pointer transform hover:scale-105 transition-all duration-300 box-style-nav" data-project="githubMedicalTriage">
-                    <div class="p-6">
-                        <h4 class="text-xl font-semibold text-white">Medical Triage System (GitHub)</h4>
-                        <p class="text-gray-400 mb-4">Developed a public medical triage system using Python.</p>
-                        <div class="flex flex-wrap gap-2 text-sm font-mono">
-                            <span class="bg-gray-700 text-green-400 px-2.5 py-0.5 rounded">Python</span>
-                            <span class="bg-gray-700 text-green-400 px-2.5 py-0.5 rounded">Algorithm Design</span>
-                        </div>
-                    </div>
+        <!-- Section 06: AI Resume Assistant -->
+        <section id="resume-assistant" class="py-20 md:py-32 container mx-auto px-6 scroll-mt-24">
+            <h3 class="section-title text-4xl font-bold text-center mb-12"><span class="text-green-400">06.</span> <span class="title-text">AI Resume Assistant</span></h3>
+            <div class="max-w-3xl mx-auto text-gray-300 p-8 rounded-lg shadow-xl border border-gray-700 box-style-nav">
+                <p class="mb-6">Paste a job description or a section of your resume below to get AI-powered feedback and suggestions for improvement, optimized for ATS and top-tier companies.</p>
+                <textarea id="resumeInput" class="w-full p-4 rounded-lg bg-gray-700 text-gray-300 border border-gray-600 focus:outline-none focus:border-green-400 h-40 mb-4" placeholder="e.g., 'Seeking a Software Engineer role...' or a job description snippet"></textarea>
+                <button id="getResumeFeedbackBtn" class="main-button text-white px-5 py-2 rounded-lg transition shadow-lg flex items-center justify-center space-x-2 w-full md:w-auto">
+                    <span id="feedbackButtonText">✨ Get Resume Feedback</span>
+                    <div id="feedbackSpinner" class="spinner hidden"></div>
+                </button>
+                <div id="resumeFeedbackOutput" class="text-gray-300 space-y-4 mt-6 p-4 bg-gray-700 rounded-lg hidden">
+                    <h4 class="font-semibold text-white mb-2">AI Feedback:</h4>
+                    <p id="aiResumeFeedbackText"></p>
                 </div>
             </div>
         </section>
 
-        <section id="certifications" class="py-20 md:py-32 container mx-auto px-6 scroll-mt-24">
-            <h3 class="section-title text-4xl font-bold text-center mb-12"><span class="text-green-400">05.</span> <span class="title-text">Certifications & Achievements</span></h3>
-            <div class="max-w-3xl mx-auto text-gray-300 bg-gray-800 p-8 rounded-lg shadow-xl border border-gray-700 box-style-nav">
-                <p class="mb-6">A selection of my professional certifications and notable achievements, demonstrating continuous learning and expertise across various domains:</p>
-                <ul class="space-y-4">
-                    <li class="cert-item border-b border-gray-700 pb-4 last:border-b-0 last:pb-0">
-                        <div class="cert-header cursor-pointer flex justify-between items-center text-white text-lg font-semibold hover:text-green-400 transition">
-                            <span>Accenture NA Coding: Dev & Advanced Engineering Job Simulation</span>
-                            <span class="text-sm text-gray-400">May 2025</span>
-                        </div>
-                        <div class="certification-details hidden mt-2 pl-4 text-gray-400">Issued by Forage.</div>
-                    </li>
-                    <li class="cert-item border-b border-gray-700 pb-4 last:border-b-0 last:pb-0">
-                        <div class="cert-header cursor-pointer flex justify-between items-center text-white text-lg font-semibold hover:text-green-400 transition">
-                            <span>AWS APAC Solutions Architecture Job Simulation</span>
-                            <span class="text-sm text-gray-400">Jan 2025</span>
-                        </div>
-                        <div class="certification-details hidden mt-2 pl-4 text-gray-400">Issued by Forage.</div>
-                    </li>
-                    <li class="cert-item border-b border-gray-700 pb-4 last:border-b-0 last:pb-0">
-                        <div class="cert-header cursor-pointer flex justify-between items-center text-white text-lg font-semibold hover:text-green-400 transition">
-                            <span>Goldman Sachs Software Engineering Virtual Experience</span>
-                            <span class="text-sm text-gray-400">Jan 2025</span>
-                        </div>
-                        <div class="certification-details hidden mt-2 pl-4 text-gray-400">Issued by Forage.</div>
-                    </li>
-                    <li class="cert-item border-b border-gray-700 pb-4 last:border-b-0 last:pb-0">
-                        <div class="cert-header cursor-pointer flex justify-between items-center text-white text-lg font-semibold hover:text-green-400 transition">
-                            <span>Agnirva Space Internship Program Certificate</span>
-                            <span class="text-sm text-gray-400">Nov 2024</span>
-                        </div>
-                        <div class="certification-details hidden mt-2 pl-4 text-gray-400">Issued by Agnirva.</div>
-                    </li>
-                    <li class="cert-item border-b border-gray-700 pb-4 last:border-b-0 last:pb-0">
-                        <div class="cert-header cursor-pointer flex justify-between items-center text-white text-lg font-semibold hover:text-green-400 transition">
-                            <span>The Big Biz Theory 2025 - Runner Up</span>
-                            <span class="text-sm text-gray-400">2025</span>
-                        </div>
-                        <div class="certification-details hidden mt-2 pl-4 text-gray-400">Organized by IITM in association with Traya Health.</div>
-                    </li>
-                    <li class="cert-item border-b border-gray-700 pb-4 last:border-b-0 last:pb-0">
-                        <div class="cert-header cursor-pointer flex justify-between items-center text-white text-lg font-semibold hover:text-green-400 transition">
-                            <span>Unstop Talent Park 2025 - Runner Up</span>
-                            <span class="text-sm text-gray-400">2025</span>
-                        </div>
-                        <div class="certification-details hidden mt-2 pl-4 text-gray-400">Issued by Unstop.</div>
-                    </li>
-                    <li class="cert-item border-b border-gray-700 pb-4 last:border-b-0 last:pb-0">
-                        <div class="cert-header cursor-pointer flex justify-between items-center text-white text-lg font-semibold hover:text-green-400 transition">
-                            <span>DebugIT - Runner Up</span>
-                            <span class="text-sm text-gray-400">Feb 2025</span>
-                        </div>
-                        <div class="certification-details hidden mt-2 pl-4 text-gray-400">Organized by IIT (BHU) VARANASI.</div>
-                    </li>
-                    <li class="cert-item border-b border-gray-700 pb-4 last:border-b-0 last:pb-0">
-                        <div class="cert-header cursor-pointer flex justify-between items-center text-white text-lg font-semibold hover:text-green-400 transition">
-                            <span>Professional Diploma in Project Management</span>
-                            <span class="text-sm text-gray-400">Nov 2024</span>
-                        </div>
-                        <div class="certification-details hidden mt-2 pl-4 text-gray-400">Issued by Udemy.</div>
-                    </li>
-                    <li class="cert-item border-b border-gray-700 pb-4 last:border-b-0 last:pb-0">
-                        <div class="cert-header cursor-pointer flex justify-between items-center text-white text-lg font-semibold hover:text-green-400 transition">
-                            <span>B2B SaaS Best Practices</span>
-                            <span class="text-sm text-gray-400">Nov 2024</span>
-                        </div>
-                        <div class="certification-details hidden mt-2 pl-4 text-gray-400">Issued by Udemy.</div>
-                    </li>
-                    <li class="cert-item border-b border-gray-700 pb-4 last:border-b-0 last:pb-0">
-                        <div class="cert-header cursor-pointer flex justify-between items-center text-white text-lg font-semibold hover:text-green-400 transition">
-                            <span>Executive Diploma in Business Presenting Skills</span>
-                            <span class="text-sm text-gray-400">Nov 2024</span>
-                        </div>
-                        <div class="certification-details hidden mt-2 pl-4 text-gray-400">Issued by Udemy.</div>
-                    </li>
-                    <li class="cert-item border-b border-gray-700 pb-4 last:border-b-0 last:pb-0">
-                        <div class="cert-header cursor-pointer flex justify-between items-center text-white text-lg font-semibold hover:text-green-400 transition">
-                            <span>Public Speaking: You Can be a Great Speaker within 24 Hours</span>
-                            <span class="text-sm text-gray-400">Nov 2024</span>
-                        </div>
-                        <div class="certification-details hidden mt-2 pl-4 text-gray-400">Issued by Udemy.</div>
-                    </li>
-                    <li class="cert-item border-b border-gray-700 pb-4 last:border-b-0 last:pb-0">
-                        <div class="cert-header cursor-pointer flex justify-between items-center text-white text-lg font-semibold hover:text-green-400 transition">
-                            <span>Cold Email Lead Generation Guide</span>
-                            <span class="text-sm text-gray-400">Dec 2024</span>
-                        </div>
-                        <div class="certification-details hidden mt-2 pl-4 text-gray-400">Issued by Udemy.</div>
-                    </li>
-                    <li class="cert-item border-b border-gray-700 pb-4 last:border-b-0 last:pb-0">
-                        <div class="cert-header cursor-pointer flex justify-between items-center text-white text-lg font-semibold hover:text-green-400 transition">
-                            <span>Professional Certificate: Digital Business & Unit Economics</span>
-                            <span class="text-sm text-gray-400">May 2024</span>
-                        </div>
-                        <div class="certification-details hidden mt-2 pl-4 text-gray-400">Issued by Forage.</div>
-                    </li>
-                    <li class="cert-item border-b border-gray-700 pb-4 last:border-b-0 last:pb-0">
-                        <div class="cert-header cursor-pointer flex justify-between items-center text-white text-lg font-semibold hover:text-green-400 transition">
-                            <span>Executive Diploma in General Management</span>
-                            <span class="text-sm text-gray-400">May 2024</span>
-                        </div>
-                        <div class="certification-details hidden mt-2 pl-4 text-gray-400">Issued by Udemy.</div>
-                    </li>
-                    <li class="cert-item border-b border-gray-700 pb-4 last:border-b-0 last:pb-0">
-                        <div class="cert-header cursor-pointer flex justify-between items-center text-white text-lg font-semibold hover:text-green-400 transition">
-                            <span>Adobe Photoshop CC For Absolute Beginner to Advanced</span>
-                            <span class="text-sm text-gray-400">May 2024</span>
-                        </div>
-                        <div class="certification-details hidden mt-2 pl-4 text-gray-400">Issued by Udemy.</div>
-                    </li>
-                </ul>
-            </div>
-        </section>
-
-        <!-- Contact Section -->
+        <!-- Section 07: Contact -->
         <section id="contact" class="py-20 md:py-32 container mx-auto px-6 scroll-mt-24">
             <h3 class="section-title text-4xl font-bold text-center mb-12"><span class="text-green-400">07.</span> <span class="title-text">Get In Touch</span></h3>
             <div class="max-w-xl mx-auto text-lg text-gray-300 mb-8 box-style-nav p-8 rounded-lg shadow-xl border border-gray-700">
@@ -730,6 +673,44 @@
     </div>
 
     <script>
+        // Initialize Tone.js Synth for click feedback
+        let clickSynth = null;
+        async function initializeAudio() {
+            if (Tone.context.state !== 'running') {
+                await Tone.start();
+            }
+            if (!clickSynth) {
+                // Simulating a subtle, creamy mechanical click sound
+                clickSynth = new Tone.NoiseSynth({
+                    noise: {
+                        type: "pink" // Changed to pink noise for a softer, creamier sound
+                    },
+                    envelope: {
+                        attack: 0.01, // Slightly longer attack
+                        decay: 0.1,   // Longer decay
+                        sustain: 0.02,  // Longer sustain
+                        release: 0.15 // Longer release
+                    },
+                    volume: -30 // Even lower volume for subtlety
+                }).toDestination();
+            }
+        }
+
+        function playClickSound() {
+            if (clickSynth) {
+                clickSynth.triggerAttackRelease("64n"); // Very short note duration
+            }
+            // Add subtle vibration effect
+            if (navigator.vibrate) {
+                navigator.vibrate(50); // Vibrate for 50ms
+            }
+        }
+
+        // Ensure audio context is running on first user interaction
+        document.documentElement.addEventListener('mousedown', initializeAudio, { once: true });
+        document.documentElement.addEventListener('touchstart', initializeAudio, { once: true });
+
+
         // Data Store for Project Details
         const projectDetails = {
             travelApp: {
@@ -739,7 +720,7 @@
             },
             bankingSystem: {
                 title: "Banking System",
-                description: "<p>I engineered a secure and robust backend system designed for comprehensive account management and transaction processing. The core logic was built with Python, while MySQL was used for reliable, relational data storage.</p><p>A major focus was on automating critical banking workflows and integrating ACID-compliant transaction mechanisms. This approach significantly enhanced system reliability and led to a measured 80% reduction in processing errors compared to previous manual methods.</p>",
+                description: "<p>I engineered a secure and robust backend system designed for comprehensive account management and transaction processing. The core logic was built with Python, while MySQL was used for reliable, relational data storage.</p><p>A major focus was on automating critical banking workflows and integrating ACID-compliant transaction mechanisms. This approach significantly enhanced system reliability and leading to a measured 80% reduction in processing errors compared to previous manual methods.</p>",
                 technologies: ["Python", "MySQL", "ACID Compliance", "System Design"]
             },
             dataPipeline: {
@@ -941,6 +922,7 @@
         // Experience Timeline Accordion
         document.querySelectorAll('.experience-header').forEach(item => {
             item.addEventListener('click', event => {
+                playClickSound(); // Play sound on click
                 const details = item.nextElementSibling;
                 if (details) { // Null check for details
                     details.classList.toggle('active');
@@ -952,6 +934,7 @@
         // Certifications Accordion
         document.querySelectorAll('.cert-header').forEach(item => {
             item.addEventListener('click', event => {
+                playClickSound(); // Play sound on click
                 const details = item.nextElementSibling;
                 if (details) { // Null check for details
                     details.classList.toggle('active');
@@ -960,16 +943,80 @@
             });
         });
 
-        // Project Modal Logic
+        // Gemini API call function (reusable)
+        async function callGeminiApi(prompt, targetElement, spinnerElement, buttonElement) {
+            targetElement.textContent = ''; // Clear previous content
+            if (spinnerElement) spinnerElement.classList.remove('hidden');
+            if (buttonElement) buttonElement.disabled = true;
+
+            let chatHistory = [];
+            chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+            const payload = { contents: chatHistory };
+            const apiKey = ""; 
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+
+            let retries = 0;
+            const maxRetries = 5;
+            const baseDelay = 1000; // 1 second
+
+            while (retries < maxRetries) {
+                try {
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (response.status === 429) { // Too Many Requests
+                        retries++;
+                        const delay = baseDelay * Math.pow(2, retries - 1); // Exponential backoff
+                        await new Promise(res => setTimeout(res, delay));
+                        continue; // Retry
+                    }
+
+                    const result = await response.json();
+
+                    if (result.candidates && result.candidates.length > 0 &&
+                        result.candidates[0].content && result.candidates[0].content.parts &&
+                        result.candidates[0].content.parts.length > 0) {
+                        const text = result.candidates[0].content.parts[0].text;
+                        targetElement.innerHTML = text.replace(/\n/g, '<br>'); // Preserve newlines
+                        return true; // Success
+                    } else {
+                        targetElement.textContent = 'Failed to generate details. Please try again.';
+                        return false;
+                    }
+                } catch (error) {
+                    retries++;
+                    if (retries >= maxRetries) {
+                        targetElement.textContent = 'An error occurred after multiple retries. Please try again later.';
+                        return false;
+                    }
+                    const delay = baseDelay * Math.pow(2, retries - 1);
+                    await new Promise(res => setTimeout(res, delay));
+                }
+            }
+            return false; // All retries failed
+        }
+
+
+        // Project Modal Logic with Gemini API
         const modal = document.getElementById('projectModal');
         const modalTitle = document.getElementById('modalTitle');
         const modalDescription = document.getElementById('modalDescription');
         const modalTech = document.getElementById('modalTech');
         const closeModalBtn = document.getElementById('closeModal');
+        const generateDetailsBtn = document.getElementById('generateDetailsBtn');
+        const generateButtonText = document.getElementById('generateButtonText');
+        const projectSpinner = document.getElementById('projectSpinner'); // Corrected ID here
+        const generatedContentDiv = document.getElementById('generatedContent');
+        const aiDescriptionPara = document.getElementById('aiDescription');
+        const aiDescriptionSpinner = document.getElementById('aiDescriptionSpinner'); // Corrected ID here
         let currentProjectId = null;
 
         document.querySelectorAll('.project-card').forEach(card => {
             card.addEventListener('click', () => {
+                playClickSound(); // Play sound on click
                 currentProjectId = card.dataset.project;
                 const data = projectDetails[currentProjectId];
 
@@ -985,6 +1032,13 @@
                         modalTech.appendChild(span);
                     });
                 }
+
+                // Reset generated content section
+                if (generatedContentDiv) generatedContentDiv.classList.add('hidden');
+                if (aiDescriptionPara) aiDescriptionPara.textContent = '';
+                if (generateButtonText) generateButtonText.textContent = '✨ Generate More Details';
+                if (projectSpinner) projectSpinner.classList.add('hidden');
+                if (generateDetailsBtn) generateDetailsBtn.disabled = false;
 
                 if (modal) { // Null check for modal
                     modal.classList.remove('opacity-0', 'pointer-events-none');
@@ -1019,11 +1073,391 @@
             });
         }
 
+        // Gemini API call logic for project details
+        if (generateDetailsBtn) { // Null check for generateDetailsBtn
+            generateDetailsBtn.addEventListener('click', async () => {
+                playClickSound(); // Play sound on click
+                if (!currentProjectId) return;
+
+                if (generateButtonText) generateButtonText.textContent = 'Generating...';
+                if (aiDescriptionSpinner) aiDescriptionSpinner.classList.remove('hidden'); // Show spinner
+                if (generatedContentDiv) generatedContentDiv.classList.remove('hidden'); // Ensure container is visible for spinner
+                if (aiDescriptionPara) aiDescriptionPara.textContent = ''; // Clear previous content
+
+                const prompt = `Generate a more detailed, professional, and impactful description for a software engineering project titled '${projectDetails[currentProjectId].title}' with the current brief description: '${projectDetails[currentProjectId].description.replace(/<[^>]*>?/gm, '')}'. Focus on technical depth, impact, scalability, and problem-solving. Make it suitable for a software engineer's portfolio.`;
+
+                const success = await callGeminiApi(prompt, aiDescriptionPara, aiDescriptionSpinner, generateDetailsBtn);
+                
+                if (aiDescriptionSpinner) aiDescriptionSpinner.classList.add('hidden'); // Hide spinner after API call
+                if (success) {
+                    if (generateButtonText) generateButtonText.textContent = '✨ Generated!';
+                } else {
+                    if (generateButtonText) generateButtonText.textContent = 'Try Again';
+                }
+                if (generateDetailsBtn) generateDetailsBtn.disabled = false; // Re-enable button after attempt
+            });
+        }
+
+        // Skill Explanation Logic
+        document.querySelectorAll('.explain-skill-btn').forEach(button => {
+            button.addEventListener('click', async (event) => {
+                playClickSound(); // Play sound on click
+                event.stopPropagation(); // Prevent parent accordion from toggling
+                const skillItem = event.target.closest('li');
+                const skillHeader = skillItem ? skillItem.querySelector('.skill-header') : null;
+                const skillName = skillHeader ? skillHeader.dataset.skill : null;
+                const explanationContent = skillItem ? skillItem.querySelector('.skill-explanation-content') : null;
+                const explanationText = explanationContent ? explanationContent.querySelector('.skill-explanation-text') : null;
+                const explanationSpinner = explanationContent ? explanationContent.querySelector('.explanation-spinner') : null;
+                
+                if (!skillName || !explanationContent || !explanationText || !explanationSpinner) return;
+
+                // Toggle visibility
+                const isActive = explanationContent.classList.toggle('active');
+                explanationContent.classList.toggle('hidden', !isActive);
+
+                if (isActive && explanationText.textContent === '') { // Only fetch if showing and not already generated
+                    event.target.textContent = 'Generating...';
+                    explanationSpinner.classList.remove('hidden'); // Show spinner
+                    const prompt = `Provide a concise, technical explanation for the skill or skill category: '${skillName}' in the context of a software engineering portfolio, highlighting its relevance and common applications. Keep it to 2-3 sentences.`;
+                    
+                    const success = await callGeminiApi(prompt, explanationText, explanationSpinner, event.target);
+                    
+                    explanationSpinner.classList.add('hidden'); // Hide spinner after API call
+                    if (success) {
+                        event.target.textContent = '✨ Explained!';
+                    } else {
+                        event.target.textContent = 'Try Again';
+                    }
+                } else {
+                    // If already generated and just toggling, ensure button is re-enabled if it was disabled
+                    event.target.disabled = false;
+                    if (explanationText.textContent !== '' && event.target.textContent !== '✨ Explained!') {
+                        event.target.textContent = '✨ Explained!'; // Ensure correct text if toggled after success
+                    } else if (explanationText.textContent === '' && event.target.textContent !== '✨ Explain') {
+                        event.target.textContent = '✨ Explain'; // Revert if toggled before generation
+                    }
+                }
+            });
+        });
+
+
         // Theme Toggle Logic
         const themeToggleBtn = document.getElementById('themeToggle');
         const htmlElement = document.documentElement;
         const darkIcon = document.querySelector('.dark-icon');
         const lightIcon = document.querySelector('.light-icon');
+        const backgroundOverlay = document.getElementById('background-overlay');
+
+        const backgroundSnippets = [
+            'E=mc²', '∫f(x)dx', 'H(X) = -Σ P(x)logP(x)', '// Entropy',
+            '∀x∃y(P(x) → Q(y))', 'λx.x', 'def factorial(n):',
+            'if n == 0: return 1', 'else: return n * factorial(n-1)',
+            '{ x | x ∈ N and x > 10 }', 'console.log("Hello World");',
+            'git commit -m "Initial commit"', 'class MyClass { public: MyClass() {} };',
+            'int main() { return 0; }', 'const PI = 3.14159;', 'while (true) { /* loop */ }',
+            'SELECT * FROM users WHERE age > 18;', '// SQL Query',
+            'try { /* code */ } catch (e) { /* handle error */ }',
+            'function fib(n) { if (n <= 1) return n; return fib(n-1) + fib(n-2); }',
+            'import React from \'react\';', 'const App = () => <div>Hello</div>;',
+            '(a + b)² = a² + 2ab + b²', '∇ ⋅ E = ρ/ε₀', '// Gauss\'s Law',
+            'public static void main(String[] args) { System.out.println("Java!"); }',
+            'for (let i = 0; i < 10; i++) { /* iteration */ }',
+            'tensor = tf.constant([[1, 2], [3, 4]])', '// TensorFlow',
+            'class Node { constructor(val) { this.val = val; this.next = null; } }',
+            'y = mx + b', 'sin(θ) = opp/hyp', 'A = πr²',
+            'for i in range(10): pass', 'int sum = 0; for(int i=0; i<N; ++i) sum+=arr[i];',
+            'public class HelloWorld { public static void main(String[] args) { System.out.println("Hello!"); } }',
+            'SELECT COUNT(*) FROM products WHERE price > 100;',
+            'const fetchData = async () => { try { await fetch(\'/api\'); } catch (e) {} };',
+            'function power(base, exp) { return exp === 0 ? 1 : base * power(base, exp - 1); }',
+            'let data = [1, 2, 3, 4, 5]; data.map(x => x * 2);',
+            'if (x > 0 && y < 10) { /* condition */ }',
+            'z = a + bi', 'e^(iπ) + 1 = 0', '// Euler\'s Identity',
+            'struct Point { int x, y; };', 'Point p = {1, 2};',
+            '#include <iostream>', 'int main() { std::cout << "C++"; return 0; }',
+            'db.collection("cities").doc("LA").get();', '// Firestore',
+            'const reducer = (state, action) => { /* logic */ };',
+            '(x - h)² + (y - k)² = r²', '// Circle Equation',
+            'float inverse_sqrt(float x) { float xhalf = 0.5f * x; int i = *(int*)&x; i = 0x5f3759df - (i >> 1); x = *(float*)&i; x = x * (1.5f - xhalf * x * x); return x; }',
+            'void setup() { size(600, 400); }', 'void draw() { background(0); ellipse(mouseX, mouseY, 50, 50); }', '// Processing',
+            'SELECT AVG(salary) FROM employees GROUP BY department;',
+            'try { connect(); } catch (SQLException e) { log(e); } finally { disconnect(); }',
+            'class Animal { constructor(name) { this.name = name; } speak() { console.log(this.name); } }',
+            'const square = x => x * x;', 'square(5);',
+            'F = Gm₁m₂/r²', '// Gravitational Force',
+            'PV = nRT', '// Ideal Gas Law',
+            'if (condition) { /* do something */ } else { /* do something else */ }',
+            'for (int j = 0; j < M; ++j) { /* nested loop */ }',
+            'public class MyService { @Autowired private MyRepository repo; }',
+            'const newArray = oldArray.filter(item => item.id > 10);',
+            'function sum(a, b) { return a + b; }', 'sum(10, 20);',
+            '(x + y)³ = x³ + 3x²y + 3xy² + y³',
+            'SELECT MAX(order_total) FROM orders;',
+            'const state = { count: 0 };', 'state.count++;',
+            'while (i < N && arr[i] < target) { i++; }',
+            '#include <vector>', 'std::vector<int> v; v.push_back(10);',
+            'db.runTransaction(async (transaction) => { /* transaction logic */ });',
+            'const memo = {}; function memoizedFib(n) { if (n in memo) return memo[n]; if (n <= 1) return n; memo[n] = memoizedFib(n-1) + memoizedFib(n-2); return memo[n]; }',
+            'alpha = beta + gamma', 'delta = epsilon * zeta', 'eta = theta / iota',
+            'kappa = lambda % mu', 'nu = xi ** omicron', 'pi = rho - sigma',
+            'tau = upsilon + phi', 'chi = psi * omega', 'sqrt(2)', 'log(x)', 'exp(y)',
+            'matrix = [[1, 0], [0, 1]]', 'vector = [1, 2, 3]', 'dot_product = v1 . v2',
+            'cross_product = v1 x v2', 'determinant(M)', 'transpose(M)', 'inverse(M)',
+            'gradient = ∇f', 'divergence = ∇ ⋅ F', 'curl = ∇ × F',
+            'int main(void) { return 0; }', 'printf("Hello");', 'scanf("%d", &num);',
+            'char *str = "string";', 'struct User { int id; char name[50]; };',
+            '#define MAX_SIZE 100', 'template <typename T> T max(T a, T b) { return a > b ? a : b; }',
+            'std::map<std::string, int> counts;', 'counts["apple"] = 5;',
+            'try (Connection conn = DriverManager.getConnection(url)) { /* code */ }',
+            'public interface MyInterface { void doSomething(); }',
+            'abstract class Shape { abstract double area(); }',
+            'override func viewDidLoad() { super.viewDidLoad(); }',
+            'let result = someOptional?.property ?? defaultValue;',
+            'SELECT employee_name, salary FROM employees ORDER BY salary DESC;',
+            'UPDATE products SET price = price * 1.1 WHERE category = \'electronics\';',
+            'DELETE FROM customers WHERE last_order_date < \'2023-01-01\';',
+            'CREATE TABLE users (id INT PRIMARY KEY, name VARCHAR(255));',
+            'ALTER TABLE products ADD COLUMN weight DECIMAL(5,2);',
+            'DROP TABLE old_data;',
+            '// This is a single-line comment in JavaScript',
+            '/* This is a multi-line comment in CSS */',
+            '# Python comment',
+            '-- SQL comment',
+            '// C++ comment',
+            '/* C comment */',
+            '// Dart comment',
+            '// HTML comment',
+            '// CSS comment',
+            '// React component',
+            '// Angular component',
+            '// Vue component',
+            '// Svelte component',
+            '// Node.js server',
+            '// Express.js route',
+            '// Django view',
+            '// Flask app',
+            '// Spring Boot service',
+            '// Kubernetes YAML',
+            '// Dockerfile instruction',
+            '// AWS Lambda function',
+            '// Google Cloud Function',
+            '// Azure Function',
+            '// Machine Learning model training',
+            '// Data preprocessing script',
+            '// Neural network architecture',
+            '// Gradient descent algorithm',
+            '// Backpropagation calculation',
+            '// Reinforcement learning agent',
+            '// Natural Language Processing',
+            '// Computer Vision algorithm',
+            '// Big O notation: O(n log n)',
+            '// Time complexity: O(1)',
+            '// Space complexity: O(n^2)',
+            '// Bubble sort',
+            '// Quick sort',
+            '// Merge sort',
+            '// Binary search',
+            '// Linked list traversal',
+            '// Tree data structure',
+            '// Graph algorithm',
+            '// Hash table collision resolution',
+            '// Dynamic programming state transition',
+            '// Recursion base case',
+            '// Iteration loop condition',
+            '// API endpoint definition',
+            '// Database schema design',
+            '// Frontend component lifecycle',
+            '// Backend microservice communication',
+            '// Cloud infrastructure provisioning',
+            '// CI/CD pipeline stage',
+            '// Unit test assertion',
+            '// Integration test scenario',
+            '// End-to-end test flow',
+            '// Agile sprint planning',
+            '// Scrum daily standup',
+            '// Kanban board visualization',
+            '// Design pattern: Singleton',
+            '// Design pattern: Factory',
+            '// Design pattern: Observer',
+            '// Design pattern: Strategy',
+            '// SOLID principles',
+            '// DRY principle',
+            '// KISS principle',
+            '// YAGNI principle',
+            '// Functional programming paradigm',
+            '// Object-oriented programming paradigm',
+            '// Imperative programming paradigm',
+            '// Declarative programming paradigm',
+            '// Event-driven architecture',
+            '// Microservices architecture',
+            '// Monolithic architecture',
+            '// Serverless computing',
+            '// Containerization with Docker',
+            '// Orchestration with Kubernetes',
+            '// Version control with Git',
+            '// Branching strategy',
+            '// Pull request review',
+            '// Code merge conflict',
+            '// Debugging techniques',
+            '// Performance optimization',
+            '// Security best practices',
+            '// Data encryption algorithm',
+            '// Hashing function',
+            '// Digital signature verification',
+            '// Network protocol: HTTP/S',
+            '// Network protocol: TCP/IP',
+            '// DNS resolution',
+            '// Load balancing strategy',
+            '// Caching mechanism',
+            '// Database indexing',
+            '// Query optimization',
+            '// Data normalization',
+            '// ACID properties',
+            '// CAP theorem',
+            '// Distributed systems consensus',
+            '// Concurrency control',
+            '// Parallel processing',
+            '// Asynchronous programming',
+            '// Event loop mechanism',
+            '// Callback functions',
+            '// Promises and async/await',
+            '// Error handling strategies',
+            '// Logging and monitoring',
+            '// Alerting and incident response',
+            '// Disaster recovery plan',
+            '// Backup and restore procedures',
+            '// Scalability considerations',
+            '// High availability design',
+            '// Fault tolerance implementation',
+            '// Latency reduction techniques',
+            '// Throughput optimization',
+            '// Resource management',
+            '// Memory allocation',
+            '// Garbage collection',
+            '// Pointers and references',
+            '// Data types and variables',
+            '// Control flow statements',
+            '// Functions and procedures',
+            '// Modules and packages',
+            '// Libraries and frameworks',
+            '// APIs and SDKs',
+            '// Command-line interface (CLI)',
+            '// Graphical user interface (GUI)',
+            '// Web assembly (WASM)',
+            '// Blockchain technology',
+            '// Smart contracts',
+            '// Cryptocurrencies',
+            '// Decentralized applications (DApps)',
+            '// Machine learning pipelines',
+            '// Feature engineering',
+            '// Model selection',
+            '// Hyperparameter tuning',
+            '// Model evaluation metrics',
+            '// Bias-variance tradeoff',
+            '// Overfitting and underfitting',
+            '// Regularization techniques',
+            '// Cross-validation methods',
+            '// Ensemble learning',
+            '// Supervised learning',
+            '// Unsupervised learning',
+            '// Reinforcement learning',
+            '// Deep learning architectures',
+            '// Convolutional Neural Networks (CNNs)',
+            '// Recurrent Neural Networks (RNNs)',
+            '// Transformers',
+            '// Generative Adversarial Networks (GANs)',
+            '// Natural Language Understanding (NLU)',
+            '// Natural Language Generation (NLG)',
+            '// Speech recognition',
+            '// Image recognition',
+            '// Object detection',
+            '// Semantic segmentation',
+            '// Pose estimation',
+            '// Facial recognition',
+            '// Time series analysis',
+            '// Anomaly detection',
+            '// Recommendation systems',
+            '// Computer vision tasks',
+            '// Robotics control systems',
+            '// Embedded systems programming',
+            '// Real-time operating systems (RTOS)',
+            '// Firmware development',
+            '// Hardware-software co-design',
+            '// Digital signal processing (DSP)',
+            '// Control theory',
+            '// Optimization algorithms',
+            '// Numerical methods',
+            '// Scientific computing',
+            '// High-performance computing (HPC)',
+            '// Parallel algorithms',
+            '// Distributed algorithms',
+            '// Quantum computing principles',
+            '// Quantum algorithms',
+            '// Cryptography basics',
+            '// Symmetric-key encryption',
+            '// Asymmetric-key encryption',
+            '// Public key infrastructure (PKI)',
+            '// Network security protocols',
+            '// Firewall configuration',
+            '// Intrusion detection systems (IDS)',
+            '// Intrusion prevention systems (IPS)',
+            '// Penetration testing',
+            '// Vulnerability assessment',
+            '// Security audits',
+            '// Compliance regulations',
+            '// Data privacy laws (GDPR, CCPA)',
+            '// Ethical AI principles',
+            '// Responsible AI development',
+            '// AI safety research',
+            '// Human-computer interaction (HCI)',
+            '// User interface (UI) design',
+            '// User experience (UX) design',
+            '// Usability testing',
+            '// Accessibility standards (WCAG)',
+            '// Information architecture',
+            '// Content strategy',
+            '// Design thinking methodology',
+            '// Lean startup principles',
+            '// Business model canvas',
+            '// Market research techniques',
+            '// Competitive analysis',
+            '// Product roadmap development',
+            '// Feature prioritization',
+            '// A/B testing',
+            '// User feedback collection and analysis (surveys, interviews, analytics, feedback forms)'
+        ];
+
+        // This function dynamically adds background snippets to the overlay.
+        // It helps to fill the background with relevant text and equations, enhancing the portfolio's theme.
+        function generateBackgroundSnippets() {
+            const overlay = document.getElementById('background-overlay');
+            const overlayRect = overlay.getBoundingClientRect();
+            const numSnippets = 100; // Number of snippets to generate
+
+            // Clear previous snippets to prevent accumulation on subsequent calls (e.g., if called on resize)
+            if (overlay) overlay.innerHTML = ''; 
+
+            for (let i = 0; i < numSnippets; i++) {
+                const span = document.createElement('span');
+                span.textContent = backgroundSnippets[Math.floor(Math.random() * backgroundSnippets.length)];
+                
+                // Random position within the overlay boundaries
+                const x = Math.random() * (overlayRect.width - 100); // -100 to keep text within bounds
+                const y = Math.random() * (overlayRect.height - 30); // -30 for text height
+
+                span.style.left = `${x}px`;
+                span.style.top = `${y}px`;
+                span.style.transform = `rotate(${Math.random() * 360}deg)`; // Random rotation
+                span.style.fontSize = `${0.6 + Math.random() * 0.4}rem`; // Random font size
+                span.style.opacity = `${0.05 + Math.random() * 0.1}`; // Subtle random opacity
+                
+                if (overlay) overlay.appendChild(span);
+            }
+        }
+        
+        // Call the function once the DOM is fully loaded to populate the background.
+        document.addEventListener('DOMContentLoaded', generateBackgroundSnippets);
 
         const savedTheme = localStorage.getItem('theme');
         if (savedTheme) {
@@ -1056,6 +1490,43 @@
                     if (lightIcon) lightIcon.classList.add('hidden');
                 }
                 createOrUpdateChart(); // Update chart colors on theme change
+            });
+        }
+
+        // Resume Assistant Logic with Gemini API
+        const resumeInput = document.getElementById('resumeInput');
+        const getResumeFeedbackBtn = document.getElementById('getResumeFeedbackBtn');
+        const feedbackButtonText = document.getElementById('feedbackButtonText');
+        const feedbackSpinner = document.getElementById('feedbackSpinner');
+        const resumeFeedbackOutput = document.getElementById('resumeFeedbackOutput');
+        const aiResumeFeedbackText = document.getElementById('aiResumeFeedbackText');
+
+        if (getResumeFeedbackBtn) { // Null check for getResumeFeedbackBtn
+            getResumeFeedbackBtn.addEventListener('click', async () => {
+                playClickSound(); // Play sound on click
+                const resumeText = resumeInput ? resumeInput.value.trim() : '';
+                if (!resumeText) {
+                    if (aiResumeFeedbackText) aiResumeFeedbackText.textContent = "Please enter some text to get feedback.";
+                    if (resumeFeedbackOutput) resumeFeedbackOutput.classList.remove('hidden');
+                    return;
+                }
+
+                if (feedbackButtonText) feedbackButtonText.textContent = 'Analyzing...';
+                if (feedbackSpinner) feedbackSpinner.classList.remove('hidden');
+                if (resumeFeedbackOutput) resumeFeedbackOutput.classList.remove('hidden'); // Show output area for spinner
+                if (aiResumeFeedbackText) aiResumeFeedbackText.textContent = ''; // Clear previous content
+
+                const prompt = `Analyze the following resume snippet or job description for a software engineering role, focusing on ATS optimization, keyword relevance, and overall impact. Provide constructive feedback and suggestions for improvement in a professional tone, keeping it concise (around 150-200 words). Here's the text: "${resumeText}"`;
+
+                const success = await callGeminiApi(prompt, aiResumeFeedbackText, feedbackSpinner, getResumeFeedbackBtn);
+                
+                if (feedbackSpinner) feedbackSpinner.classList.add('hidden'); // Hide spinner after API call
+                if (success) {
+                    if (feedbackButtonText) feedbackButtonText.textContent = '✨ Feedback Generated!';
+                } else {
+                    if (feedbackButtonText) feedbackButtonText.textContent = 'Try Again';
+                }
+                if (getResumeFeedbackBtn) getResumeFeedbackBtn.disabled = false; // Re-enable button after attempt
             });
         }
     </script>
