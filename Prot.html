@@ -1,0 +1,1063 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Naman Meena | Software Developer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <!-- Chosen Palette:
+        Dark Mode: Dark Slate / Green / White
+        Light Mode: White / Black / Orange
+    -->
+    <!-- Application Structure Plan: A full-screen, vertical-scrolling single-page application (SPA) with distinct, thematic sections (Hero, About, Skills, Experience, Projects, Certifications, Contact). This structure mirrors the elegant, narrative flow of chanhdai.com, guiding the user linearly while providing clear navigation. Each section is designed to be a prominent visual block, fostering focused engagement. Interactive elements like the typing effect, active navigation highlighting, and project modals enhance user exploration without clutter. -->
+    <!-- CONFIRMATION: NO SVG graphics used (except for pre-existing GitHub/LinkedIn icons which are common practice for functional links; for new icons, only Unicode/HTML is used). NO Mermaid JS used. -->
+    <style>
+        /* Base variables (Dark Mode Default) */
+        :root {
+            --bg-primary: #0d1117;
+            --bg-secondary: rgba(22, 27, 34, 0.6); /* Adjusted for more transparency */
+            --text-primary: #e6edf3; /* Lighter white for headings */
+            --text-secondary: #c9d1d9; /* Light gray text */
+            --accent-color: #34D399; /* Green */
+            --accent-hover: #10B981; /* Darker Green */
+            --border-color: #30363d;
+            --header-bg: rgba(13, 17, 23, 0.95);
+            --header-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+            --modal-bg: rgba(22, 27, 34, 0.6); /* Adjusted for more transparency */
+            --code-bg: rgba(1, 4, 9, 0.6); /* Adjusted for more transparency */
+            --gradient-start: #6EE7B7; /* Light Green */
+            --gradient-mid: #34D399; /* Medium Green */
+            --gradient-end: #10B981; /* Dark Green */
+            --social-github-bg: #4a5568; /* bg-gray-700 default */
+            --social-linkedin-bg: #2b6cb0; /* bg-blue-700 default */
+            --social-hover-bg: var(--accent-hover);
+            --button-bg: var(--accent-color);
+            --button-hover-bg: var(--accent-hover);
+            --grid-line-color: rgba(48, 54, 61, 0.3); /* Subtle dark grid lines - increased opacity */
+        }
+
+        /* Light Mode Variables */
+        html[data-theme='light'] {
+            --bg-primary: #ffffff;
+            --bg-secondary: rgba(248, 248, 248, 0.6); /* Adjusted for more transparency */
+            --text-primary: #1a1a1a; /* Black */
+            --text-secondary: #333333; /* Dark Gray */
+            --accent-color: #ff8c00; /* Dark Orange */
+            --accent-hover: #ffa500; /* Brighter Orange */
+            --border-color: #e0e0e0;
+            --header-bg: rgba(255, 255, 255, 0.95);
+            --header-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            --modal-bg: rgba(255, 255, 255, 0.6); /* Adjusted for more transparency */
+            --code-bg: rgba(240, 240, 240, 0.6); /* Adjusted for more transparency */
+            --gradient-start: #ffa500; /* Orange Start */
+            --gradient-mid: #ff8c00; /* Orange Mid */
+            --gradient-end: #ff7f00; /* Orange End */
+            --social-github-bg: #4a4a4a; /* Dark gray for light mode */
+            --social-linkedin-bg: #0077b5; /* LinkedIn blue, but can be orange if desired */
+            --social-hover-bg: var(--accent-hover);
+            --button-bg: var(--accent-color);
+            --button-hover-bg: var(--accent-hover);
+            --grid-line-color: rgba(224, 224, 224, 0.5); /* Subtle light grid lines */
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-secondary);
+            line-height: 1.6;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            background-image:
+                linear-gradient(to right, var(--grid-line-color) 1px, transparent 1px),
+                linear-gradient(to bottom, var(--grid-line-color) 1px, transparent 1px);
+            background-size: 20px 20px; /* Adjust grid spacing here */
+            position: relative; /* For the pseudo-element */
+            min-height: 100vh;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: 'IBM Plex Mono', monospace;
+            color: var(--text-primary);
+            transition: color 0.3s ease;
+        }
+        .header-scrolled {
+            background-color: var(--header-bg);
+            box-shadow: var(--header-shadow);
+            backdrop-filter: blur(8px); /* Blur effect */
+            -webkit-backdrop-filter: blur(8px); /* Safari support */
+        }
+        .text-gradient {
+            background-image: linear-gradient(to right, var(--gradient-start), var(--gradient-mid), var(--gradient-end));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            color: transparent; /* Fallback */
+        }
+        .experience-details, .certification-details {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-out;
+        }
+        .experience-details.active, .certification-details.active {
+            max-height: 500px; /* Adjust based on max content height */
+            transition: max-height 0.5s ease-in;
+        }
+        .modal-overlay {
+            transition: opacity 0.3s ease;
+        }
+        .modal-content {
+            transition: transform 0.3s ease, background-color 0.3s ease, border-color 0.3s ease;
+            background-color: var(--modal-bg);
+            border: 1px solid var(--border-color);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+        }
+        .code-block {
+            background-color: var(--code-bg);
+            transition: background-color 0.3s ease;
+        }
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid var(--accent-color);
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+            transition: border-top-color 0.3s ease;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        /* Tailwind overrides using CSS variables */
+        .box-style-nav {
+            background-color: var(--bg-secondary) !important;
+            border-color: var(--border-color) !important;
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+        }
+
+        .border-gray-700 { border-color: var(--border-color) !important; }
+        .text-gray-300 { color: var(--text-secondary) !important; }
+        .text-gray-400 { color: var(--text-secondary) !important; }
+        .text-green-400 { color: var(--accent-color) !important; }
+        .hover\:text-green-400:hover { color: var(--accent-hover) !important; }
+        .bg-green-500 { background-color: var(--accent-color) !important; }
+        .bg-green-600 { background-color: var(--accent-color) !important; }
+        .hover\:bg-green-600:hover { background-color: var(--accent-hover) !important; }
+        .hover\:bg-green-700:hover { background-color: var(--accent-hover) !important; }
+        .bg-gray-700 { background-color: var(--border-color) !important; } /* Used for skill tags and github/linkedin buttons in dark mode, adjusted for light */
+        .text-white { color: var(--text-primary) !important; } /* Ensure headings and primary text adapt */
+        .border-gray-900 { border-color: var(--border-color) !important; } /* For timeline dots */
+
+        /* Specific overrides for social buttons and main buttons */
+        .github-button {
+            background-color: var(--social-github-bg) !important;
+        }
+        .github-button:hover {
+            background-color: var(--social-hover-bg) !important;
+        }
+        .linkedin-button {
+            background-color: var(--social-linkedin-bg) !important;
+        }
+        .linkedin-button:hover {
+            background-color: var(--social-hover-bg) !important;
+        }
+        .main-button {
+            background-color: var(--button-bg) !important;
+        }
+        .main-button:hover {
+            background-color: var(--button-hover-bg) !important;
+        }
+    </style>
+</head>
+<body class="antialiased">
+    <!-- Header & Navigation -->
+    <header id="mainHeader" class="bg-transparent fixed top-0 left-0 w-full z-40 transition-all duration-300">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <h1 class="text-2xl font-bold text-white">Naman Meena</h1>
+            <nav class="hidden md:flex space-x-6">
+                <a href="#hero" class="nav-link text-gray-400 hover:text-green-400 transition">Home</a>
+                <a href="#about" class="nav-link text-gray-400 hover:text-green-400 transition">About</a>
+                <a href="#skills" class="nav-link text-gray-400 hover:text-green-400 transition">Skills</a>
+                <a href="#experience" class="nav-link text-gray-400 hover:text-green-400 transition">Experience</a>
+                <a href="#projects" class="nav-link text-gray-400 hover:text-green-400 transition">Projects</a>
+                <a href="#certifications" class="nav-link text-gray-400 hover:text-green-400 transition">Certifications</a>
+                <a href="#contact" class="nav-link text-gray-400 hover:text-green-400 transition">Contact</a>
+            </nav>
+            <button id="themeToggle" class="text-gray-400 hover:text-green-400 transition ml-4 p-2 rounded-full focus:outline-none focus:ring-2 focus:ring-green-400">
+                <span class="dark-icon">🌙</span>
+                <span class="light-icon hidden">☀️</span>
+            </button>
+        </div>
+    </header>
+
+    <main>
+        <!-- Hero Section -->
+        <section id="hero" class="min-h-screen flex items-center justify-center text-center p-6 bg-cover bg-center">
+            <div class="max-w-4xl mx-auto">
+                <p class="text-green-400 text-lg md:text-xl font-mono mb-4">Hello, I'm</p>
+                <h2 class="text-4xl md:text-7xl font-bold text-gradient mb-4 leading-tight">Naman Meena</h2>
+                <h3 id="typing-text" class="text-2xl md:text-4xl font-mono text-gray-300 min-h-[3rem] md:min-h-[4rem]"></h3>
+                <div class="mt-10 flex justify-center space-x-6">
+                    <a href="https://github.com/MrsNobody666" target="_blank" class="github-button text-white px-8 py-3 rounded-lg transition shadow-lg flex items-center space-x-2">
+                        <span class="text-xl">🐙</span><span>GitHub</span>
+                    </a>
+                    <a href="https://linkedin.com/in/naman-meena-a48492258" target="_blank" class="linkedin-button text-white px-8 py-3 rounded-lg transition shadow-lg flex items-center space-x-2">
+                        <span class="text-xl">💼</span><span>LinkedIn</span>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Me Section -->
+        <section id="about" class="py-20 md:py-32 container mx-auto px-6 scroll-mt-24">
+            <h3 class="section-title text-4xl font-bold text-center mb-12"><span class="text-green-400">01.</span> <span class="title-text">About Me</span></h3>
+            <div class="max-w-3xl mx-auto text-gray-300 text-lg leading-relaxed bg-gray-800 p-8 rounded-lg shadow-xl border border-gray-700 box-style-nav">
+                <p class="mb-4">I am a passionate and driven Computer Science and Engineering student at IIT (ISM) Dhanbad, expecting to graduate in 2026. My journey in technology has been marked by a deep dive into scalable full-stack development, advanced image processing, and data analytics. I thrive on solving complex problems and architecting robust systems that are both high-performing and innovative.</p>
+                <p>My academic and practical experiences have equipped me with a strong foundation in Data Structures, Algorithms, and System Design, which I am eager to apply to real-world challenges in roles like Software Engineer, Backend Developer, or Machine Learning Engineer.</p>
+            </div>
+        </section>
+
+        <!-- Skills Section -->
+        <section id="skills" class="py-20 md:py-32 container mx-auto px-6 scroll-mt-24">
+            <h3 class="section-title text-4xl font-bold text-center mb-12"><span class="text-green-400">02.</span> <span class="title-text">Technical Skills</span></h3>
+            <div class="max-w-3xl mx-auto bg-gray-800 p-8 rounded-lg shadow-xl border border-gray-700 box-style-nav">
+                <ul class="space-y-4 text-gray-300">
+                    <li class="flex items-start flex-col">
+                        <div class="flex items-center w-full justify-between">
+                            <span class="font-semibold text-green-400 w-32 shrink-0">Languages:</span>
+                            <span>Python (NumPy, Pandas, TensorFlow/Keras), Java, C, C++, Dart, SQL, HTML/CSS</span>
+                        </div>
+                    </li>
+                    <li class="flex items-start flex-col">
+                        <div class="flex items-center w-full justify-between">
+                            <span class="font-semibold text-green-400 w-32 shrink-0">Backend:</span>
+                            <span>MySQL, Firebase (Auth, Firestore, Realtime DB), RESTful APIs</span>
+                        </div>
+                    </li>
+                    <li class="flex items-start flex-col">
+                        <div class="flex items-center w-full justify-between">
+                            <span class="font-semibold text-green-400 w-32 shrink-0">Mobile Dev:</span>
+                            <span>Flutter, Android Studio, Google Maps API</span>
+                        </div>
+                    </li>
+                    <li class="flex items-start flex-col">
+                        <div class="flex items-center w-full justify-between">
+                            <span class="font-semibold text-green-400 w-32 shrink-0">Cloud & Tools:</span>
+                            <span>GCP, Git, GitHub, VS Code</span>
+                        </div>
+                    </li>
+                    <li class="flex items-start flex-col">
+                        <div class="flex items-center w-full justify-between">
+                            <span class="font-semibold text-green-400 w-32 shrink-0">Concepts:</span>
+                            <span>OOP, Data Structures & Algorithms, System Design, Machine Learning, Image Processing</span>
+                        </div>
+                    </li>
+                    <li class="flex items-start flex-col">
+                        <div class="flex items-center w-full justify-between">
+                            <span class="font-semibold text-green-400 w-32 shrink-0">Data & Business:</span>
+                            <span>Excel, Data Visualization, Market Analysis, Project Management</span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Experience Section -->
+        <section id="experience" class="py-20 md:py-32 container mx-auto px-6 scroll-mt-24">
+            <h3 class="section-title text-4xl font-bold text-center mb-12"><span class="text-green-400">03.</span> <span class="title-text">Professional & Research Experience</span></h3>
+            <div class="max-w-3xl mx-auto relative pl-6 md:pl-0">
+                <div class="absolute left-3 md:left-1/2 md:-translate-x-1/2 top-0 bottom-0 w-0.5 bg-gray-700"></div>
+
+                <!-- Experience Item 1: Research -->
+                <div class="relative mb-12 flex items-center w-full md:even:justify-end">
+                    <div class="hidden md:block w-1/2"></div>
+                    <div class="absolute -left-2.5 md:left-1/2 md:-translate-x-1/2 w-5 h-5 bg-green-500 rounded-full border-2 border-gray-900 z-10"></div>
+                    <div class="w-full md:w-1/2 p-6 rounded-lg shadow-xl border border-gray-700 bg-gray-800 text-gray-300 md:odd:pr-10 md:even:pl-10 relative box-style-nav">
+                        <div class="cursor-pointer experience-header">
+                            <p class="text-sm text-gray-400 font-mono mb-1">June 2025 – August 2025</p>
+                            <h4 class="text-xl font-semibold text-white">Research Intern / Project Assistant</h4>
+                            <p class="text-green-400 mb-2">Under Prof. Arun Dayal Udai, Head of Research and Innovation</p>
+                        </div>
+                        <div class="experience-details transition-all duration-500 ease-out active">
+                            <ul class="list-disc list-inside space-y-2 mt-4">
+                                <li>Pioneered image processing techniques and developed machine learning models (e.g., CNNs) for accurate detection of underwater manganese nodules.</li>
+                                <li>Collaborated with the Head of Research and Innovation to design and execute experiments, contributing to cutting-edge marine resource exploration.</li>
+                                <li>Utilized advanced computer vision libraries (OpenCV, Scikit-image) and deep learning frameworks for image analysis and model training.</li>
+                                <li>Contributed to enhancing the efficiency and precision of underwater object detection, advancing capabilities in autonomous underwater research.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Experience Item 2: FITJEE -->
+                <div class="relative mb-12 flex items-center w-full md:even:justify-end">
+                    <div class="hidden md:block w-1/2"></div>
+                    <div class="absolute -left-2.5 md:left-1/2 md:-translate-x-1/2 w-5 h-5 bg-green-500 rounded-full border-2 border-gray-900 z-10"></div>
+                    <div class="w-full md:w-1/2 p-6 rounded-lg shadow-xl border border-gray-700 bg-gray-800 text-gray-300 md:odd:pr-10 md:even:pl-10 relative box-style-nav">
+                        <div class="cursor-pointer experience-header">
+                            <p class="text-sm text-gray-400 font-mono mb-1">August 2023 – February 2024</p>
+                            <h4 class="text-xl font-semibold text-white">Operational/Social Intern</h4>
+                            <p class="text-green-400 mb-2">FITJEE</p>
+                        </div>
+                        <div class="experience-details transition-all duration-500 ease-out active">
+                            <ul class="list-disc list-inside space-y-2 mt-4">
+                                <li>Analyzed market trends and proposed strategic initiatives for over 50 brands, boosting Gross Merchandise Volume (GMV) through data-driven insights.</li>
+                                <li>Led inventory optimization efforts using Excel, resulting in a documented 12% increase in overall revenue and reduced holding costs.</li>
+                                <li>Managed comprehensive videography and photography for high-profile FIIT JEE events.</li>
+                                <li>Played an instrumental role in the successful execution of the IIT ISM-FIITJEE Udaan event.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Experience Item 3: Agnirva -->
+                <div class="relative mb-12 flex items-center w-full md:even:justify-end">
+                    <div class="hidden md:block w-1/2"></div>
+                    <div class="absolute -left-2.5 md:left-1/2 md:-translate-x-1/2 w-5 h-5 bg-green-500 rounded-full border-2 border-gray-900 z-10"></div>
+                    <div class="w-full md:w-1/2 p-6 rounded-lg shadow-xl border border-gray-700 bg-gray-800 text-gray-300 md:odd:pr-10 md:even:pl-10 relative box-style-nav">
+                        <div class="cursor-pointer experience-header">
+                            <p class="text-sm text-gray-400 font-mono mb-1">February 2023</p>
+                            <h4 class="text-xl font-semibold text-white">Intern</h4>
+                            <p class="text-green-400 mb-2">Agnirva Space Internship Program</p>
+                        </div>
+                        <div class="experience-details transition-all duration-500 ease-out active">
+                            <ul class="list-disc list-inside space-y-2 mt-4">
+                                <li>Developed and deployed the front-end architecture for a cross-platform mobile application using Flutter and Dart.</li>
+                                <li>Engineered robust backend services by integrating Firebase Authentication and Firestore.</li>
+                                <li>Streamlined collaborative development by implementing Git/GitHub for version control.</li>
+                                <li>Optimized mobile application performance and user interface with Android Studio for cross-platform debugging and visualization.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Projects Section -->
+        <section id="projects" class="py-20 md:py-32 container mx-auto px-6 scroll-mt-24">
+            <h3 class="section-title text-4xl font-bold text-center mb-12"><span class="text-green-400">04.</span> <span class="title-text">Projects Showcase</span></h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+                <div class="bg-gray-800 rounded-lg shadow-xl border border-gray-700 overflow-hidden project-card cursor-pointer transform hover:scale-105 transition-all duration-300 box-style-nav" data-project="travelApp">
+                    <div class="p-6">
+                        <h4 class="text-xl font-semibold text-white">Mobile App for Intercity Travel</h4>
+                        <p class="text-gray-400 mb-4">Full-featured travel application with live map tracking and booking functionalities.</p>
+                        <div class="flex flex-wrap gap-2 text-sm font-mono">
+                            <span class="bg-gray-700 text-green-400 px-2.5 py-0.5 rounded">Flutter</span>
+                            <span class="bg-gray-700 text-green-400 px-2.5 py-0.5 rounded">Dart</span>
+                            <span class="bg-gray-700 text-green-400 px-2.5 py-0.5 rounded">Google Maps API</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-gray-800 rounded-lg shadow-xl border border-gray-700 overflow-hidden project-card cursor-pointer transform hover:scale-105 transition-all duration-300 box-style-nav" data-project="bankingSystem">
+                    <div class="p-6">
+                        <h4 class="text-xl font-semibold text-white">Banking System (Python/MySQL)</h4>
+                        <p class="text-gray-400 mb-4">Secure and robust backend for account management and transactions.</p>
+                        <div class="flex flex-wrap gap-2 text-sm font-mono">
+                            <span class="bg-gray-700 text-green-400 px-2.5 py-0.5 rounded">Python</span>
+                            <span class="bg-gray-700 text-green-400 px-2.5 py-0.5 rounded">MySQL</span>
+                            <span class="bg-gray-700 text-green-400 px-2.5 py-0.5 rounded">ACID Compliance</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-gray-800 rounded-lg shadow-xl border border-gray-700 overflow-hidden project-card cursor-pointer transform hover:scale-105 transition-all duration-300 box-style-nav" data-project="dataPipeline">
+                    <div class="p-6">
+                        <h4 class="text-xl font-semibold text-white">Healthcare Data Quality Pipeline</h4>
+                        <p class="text-gray-400 mb-4">A scalable Python-based data quality assurance pipeline for healthcare datasets.</p>
+                        <div class="flex flex-wrap gap-2 text-sm font-mono">
+                            <span class="bg-gray-700 text-green-400 px-2.5 py-0.5 rounded">Python</span>
+                            <span class="bg-gray-700 text-green-400 px-2.5 py-0.5 rounded">Pandas</span>
+                            <span class="bg-gray-700 text-green-400 px-2.5 py-0.5 rounded">Data Quality</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-gray-800 rounded-lg shadow-xl border border-gray-700 overflow-hidden project-card cursor-pointer transform hover:scale-105 transition-all duration-300 box-style-nav" data-project="githubGames">
+                    <div class="p-6">
+                        <h4 class="text-xl font-semibold text-white">Go-kart Game (GitHub)</h4>
+                        <p class="text-gray-400 mb-4">Developed a public Go-kart game, showcasing game development principles.</p>
+                        <div class="flex flex-wrap gap-2 text-sm font-mono">
+                            <span class="bg-gray-700 text-green-400 px-2.5 py-0.5 rounded">Game Dev</span>
+                            <span class="bg-gray-700 text-green-400 px-2.5 py-0.5 rounded">Physics Simulation</span>
+                        </div>
+                    </div>
+                </div>
+                 <div class="bg-gray-800 rounded-lg shadow-xl border border-gray-700 overflow-hidden project-card cursor-pointer transform hover:scale-105 transition-all duration-300 box-style-nav" data-project="githubMedicalTriage">
+                    <div class="p-6">
+                        <h4 class="text-xl font-semibold text-white">Medical Triage System (GitHub)</h4>
+                        <p class="text-gray-400 mb-4">Developed a public medical triage system using Python.</p>
+                        <div class="flex flex-wrap gap-2 text-sm font-mono">
+                            <span class="bg-gray-700 text-green-400 px-2.5 py-0.5 rounded">Python</span>
+                            <span class="bg-gray-700 text-green-400 px-2.5 py-0.5 rounded">Algorithm Design</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="certifications" class="py-20 md:py-32 container mx-auto px-6 scroll-mt-24">
+            <h3 class="section-title text-4xl font-bold text-center mb-12"><span class="text-green-400">05.</span> <span class="title-text">Certifications & Achievements</span></h3>
+            <div class="max-w-3xl mx-auto text-gray-300 bg-gray-800 p-8 rounded-lg shadow-xl border border-gray-700 box-style-nav">
+                <p class="mb-6">A selection of my professional certifications and notable achievements, demonstrating continuous learning and expertise across various domains:</p>
+                <ul class="space-y-4">
+                    <li class="cert-item border-b border-gray-700 pb-4 last:border-b-0 last:pb-0">
+                        <div class="cert-header cursor-pointer flex justify-between items-center text-white text-lg font-semibold hover:text-green-400 transition">
+                            <span>Accenture NA Coding: Dev & Advanced Engineering Job Simulation</span>
+                            <span class="text-sm text-gray-400">May 2025</span>
+                        </div>
+                        <div class="certification-details hidden mt-2 pl-4 text-gray-400">Issued by Forage.</div>
+                    </li>
+                    <li class="cert-item border-b border-gray-700 pb-4 last:border-b-0 last:pb-0">
+                        <div class="cert-header cursor-pointer flex justify-between items-center text-white text-lg font-semibold hover:text-green-400 transition">
+                            <span>AWS APAC Solutions Architecture Job Simulation</span>
+                            <span class="text-sm text-gray-400">Jan 2025</span>
+                        </div>
+                        <div class="certification-details hidden mt-2 pl-4 text-gray-400">Issued by Forage.</div>
+                    </li>
+                    <li class="cert-item border-b border-gray-700 pb-4 last:border-b-0 last:pb-0">
+                        <div class="cert-header cursor-pointer flex justify-between items-center text-white text-lg font-semibold hover:text-green-400 transition">
+                            <span>Goldman Sachs Software Engineering Virtual Experience</span>
+                            <span class="text-sm text-gray-400">Jan 2025</span>
+                        </div>
+                        <div class="certification-details hidden mt-2 pl-4 text-gray-400">Issued by Forage.</div>
+                    </li>
+                    <li class="cert-item border-b border-gray-700 pb-4 last:border-b-0 last:pb-0">
+                        <div class="cert-header cursor-pointer flex justify-between items-center text-white text-lg font-semibold hover:text-green-400 transition">
+                            <span>Agnirva Space Internship Program Certificate</span>
+                            <span class="text-sm text-gray-400">Nov 2024</span>
+                        </div>
+                        <div class="certification-details hidden mt-2 pl-4 text-gray-400">Issued by Agnirva.</div>
+                    </li>
+                    <li class="cert-item border-b border-gray-700 pb-4 last:border-b-0 last:pb-0">
+                        <div class="cert-header cursor-pointer flex justify-between items-center text-white text-lg font-semibold hover:text-green-400 transition">
+                            <span>The Big Biz Theory 2025 - Runner Up</span>
+                            <span class="text-sm text-gray-400">2025</span>
+                        </div>
+                        <div class="certification-details hidden mt-2 pl-4 text-gray-400">Organized by IITM in association with Traya Health.</div>
+                    </li>
+                    <li class="cert-item border-b border-gray-700 pb-4 last:border-b-0 last:pb-0">
+                        <div class="cert-header cursor-pointer flex justify-between items-center text-white text-lg font-semibold hover:text-green-400 transition">
+                            <span>Unstop Talent Park 2025 - Runner Up</span>
+                            <span class="text-sm text-gray-400">2025</span>
+                        </div>
+                        <div class="certification-details hidden mt-2 pl-4 text-gray-400">Issued by Unstop.</div>
+                    </li>
+                    <li class="cert-item border-b border-gray-700 pb-4 last:border-b-0 last:pb-0">
+                        <div class="cert-header cursor-pointer flex justify-between items-center text-white text-lg font-semibold hover:text-green-400 transition">
+                            <span>DebugIT - Runner Up</span>
+                            <span class="text-sm text-gray-400">Feb 2025</span>
+                        </div>
+                        <div class="certification-details hidden mt-2 pl-4 text-gray-400">Organized by IIT (BHU) VARANASI.</div>
+                    </li>
+                    <li class="cert-item border-b border-gray-700 pb-4 last:border-b-0 last:pb-0">
+                        <div class="cert-header cursor-pointer flex justify-between items-center text-white text-lg font-semibold hover:text-green-400 transition">
+                            <span>Professional Diploma in Project Management</span>
+                            <span class="text-sm text-gray-400">Nov 2024</span>
+                        </div>
+                        <div class="certification-details hidden mt-2 pl-4 text-gray-400">Issued by Udemy.</div>
+                    </li>
+                    <li class="cert-item border-b border-gray-700 pb-4 last:border-b-0 last:pb-0">
+                        <div class="cert-header cursor-pointer flex justify-between items-center text-white text-lg font-semibold hover:text-green-400 transition">
+                            <span>B2B SaaS Best Practices</span>
+                            <span class="text-sm text-gray-400">Nov 2024</span>
+                        </div>
+                        <div class="certification-details hidden mt-2 pl-4 text-gray-400">Issued by Udemy.</div>
+                    </li>
+                    <li class="cert-item border-b border-gray-700 pb-4 last:border-b-0 last:pb-0">
+                        <div class="cert-header cursor-pointer flex justify-between items-center text-white text-lg font-semibold hover:text-green-400 transition">
+                            <span>Executive Diploma in Business Presenting Skills</span>
+                            <span class="text-sm text-gray-400">Nov 2024</span>
+                        </div>
+                        <div class="certification-details hidden mt-2 pl-4 text-gray-400">Issued by Udemy.</div>
+                    </li>
+                    <li class="cert-item border-b border-gray-700 pb-4 last:border-b-0 last:pb-0">
+                        <div class="cert-header cursor-pointer flex justify-between items-center text-white text-lg font-semibold hover:text-green-400 transition">
+                            <span>Public Speaking: You Can be a Great Speaker within 24 Hours</span>
+                            <span class="text-sm text-gray-400">Nov 2024</span>
+                        </div>
+                        <div class="certification-details hidden mt-2 pl-4 text-gray-400">Issued by Udemy.</div>
+                    </li>
+                    <li class="cert-item border-b border-gray-700 pb-4 last:border-b-0 last:pb-0">
+                        <div class="cert-header cursor-pointer flex justify-between items-center text-white text-lg font-semibold hover:text-green-400 transition">
+                            <span>Cold Email Lead Generation Guide</span>
+                            <span class="text-sm text-gray-400">Dec 2024</span>
+                        </div>
+                        <div class="certification-details hidden mt-2 pl-4 text-gray-400">Issued by Udemy.</div>
+                    </li>
+                    <li class="cert-item border-b border-gray-700 pb-4 last:border-b-0 last:pb-0">
+                        <div class="cert-header cursor-pointer flex justify-between items-center text-white text-lg font-semibold hover:text-green-400 transition">
+                            <span>Professional Certificate: Digital Business & Unit Economics</span>
+                            <span class="text-sm text-gray-400">May 2024</span>
+                        </div>
+                        <div class="certification-details hidden mt-2 pl-4 text-gray-400">Issued by Forage.</div>
+                    </li>
+                    <li class="cert-item border-b border-gray-700 pb-4 last:border-b-0 last:pb-0">
+                        <div class="cert-header cursor-pointer flex justify-between items-center text-white text-lg font-semibold hover:text-green-400 transition">
+                            <span>Executive Diploma in General Management</span>
+                            <span class="text-sm text-gray-400">May 2024</span>
+                        </div>
+                        <div class="certification-details hidden mt-2 pl-4 text-gray-400">Issued by Udemy.</div>
+                    </li>
+                    <li class="cert-item border-b border-gray-700 pb-4 last:border-b-0 last:pb-0">
+                        <div class="cert-header cursor-pointer flex justify-between items-center text-white text-lg font-semibold hover:text-green-400 transition">
+                            <span>Adobe Photoshop CC For Absolute Beginner to Advanced</span>
+                            <span class="text-sm text-gray-400">May 2024</span>
+                        </div>
+                        <div class="certification-details hidden mt-2 pl-4 text-gray-400">Issued by Udemy.</div>
+                    </li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Projects Section -->
+        <section id="projects" class="py-20 md:py-32 container mx-auto px-6 scroll-mt-24">
+            <h3 class="section-title text-4xl font-bold text-center mb-12"><span class="text-green-400">04.</span> <span class="title-text">Projects Showcase</span></h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+                <div class="bg-gray-800 rounded-lg shadow-xl border border-gray-700 overflow-hidden project-card cursor-pointer transform hover:scale-105 transition-all duration-300 box-style-nav" data-project="travelApp">
+                    <div class="p-6">
+                        <h4 class="text-xl font-semibold text-white">Mobile App for Intercity Travel</h4>
+                        <p class="text-gray-400 mb-4">Full-featured travel application with live map tracking and booking functionalities.</p>
+                        <div class="flex flex-wrap gap-2 text-sm font-mono">
+                            <span class="bg-gray-700 text-green-400 px-2.5 py-0.5 rounded">Flutter</span>
+                            <span class="bg-gray-700 text-green-400 px-2.5 py-0.5 rounded">Dart</span>
+                            <span class="bg-gray-700 text-green-400 px-2.5 py-0.5 rounded">Google Maps API</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-gray-800 rounded-lg shadow-xl border border-gray-700 overflow-hidden project-card cursor-pointer transform hover:scale-105 transition-all duration-300 box-style-nav" data-project="bankingSystem">
+                    <div class="p-6">
+                        <h4 class="text-xl font-semibold text-white">Banking System (Python/MySQL)</h4>
+                        <p class="text-gray-400 mb-4">Secure and robust backend for account management and transactions.</p>
+                        <div class="flex flex-wrap gap-2 text-sm font-mono">
+                            <span class="bg-gray-700 text-green-400 px-2.5 py-0.5 rounded">Python</span>
+                            <span class="bg-gray-700 text-green-400 px-2.5 py-0.5 rounded">MySQL</span>
+                            <span class="bg-gray-700 text-green-400 px-2.5 py-0.5 rounded">ACID Compliance</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-gray-800 rounded-lg shadow-xl border border-gray-700 overflow-hidden project-card cursor-pointer transform hover:scale-105 transition-all duration-300 box-style-nav" data-project="dataPipeline">
+                    <div class="p-6">
+                        <h4 class="text-xl font-semibold text-white">Healthcare Data Quality Pipeline</h4>
+                        <p class="text-gray-400 mb-4">A scalable Python-based data quality assurance pipeline for healthcare datasets.</p>
+                        <div class="flex flex-wrap gap-2 text-sm font-mono">
+                            <span class="bg-gray-700 text-green-400 px-2.5 py-0.5 rounded">Python</span>
+                            <span class="bg-gray-700 text-green-400 px-2.5 py-0.5 rounded">Pandas</span>
+                            <span class="bg-gray-700 text-green-400 px-2.5 py-0.5 rounded">Data Quality</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-gray-800 rounded-lg shadow-xl border border-gray-700 overflow-hidden project-card cursor-pointer transform hover:scale-105 transition-all duration-300 box-style-nav" data-project="githubGames">
+                    <div class="p-6">
+                        <h4 class="text-xl font-semibold text-white">Go-kart Game (GitHub)</h4>
+                        <p class="text-gray-400 mb-4">Developed a public Go-kart game, showcasing game development principles.</p>
+                        <div class="flex flex-wrap gap-2 text-sm font-mono">
+                            <span class="bg-gray-700 text-green-400 px-2.5 py-0.5 rounded">Game Dev</span>
+                            <span class="bg-gray-700 text-green-400 px-2.5 py-0.5 rounded">Physics Simulation</span>
+                        </div>
+                    </div>
+                </div>
+                 <div class="bg-gray-800 rounded-lg shadow-xl border border-gray-700 overflow-hidden project-card cursor-pointer transform hover:scale-105 transition-all duration-300 box-style-nav" data-project="githubMedicalTriage">
+                    <div class="p-6">
+                        <h4 class="text-xl font-semibold text-white">Medical Triage System (GitHub)</h4>
+                        <p class="text-gray-400 mb-4">Developed a public medical triage system using Python.</p>
+                        <div class="flex flex-wrap gap-2 text-sm font-mono">
+                            <span class="bg-gray-700 text-green-400 px-2.5 py-0.5 rounded">Python</span>
+                            <span class="bg-gray-700 text-green-400 px-2.5 py-0.5 rounded">Algorithm Design</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="certifications" class="py-20 md:py-32 container mx-auto px-6 scroll-mt-24">
+            <h3 class="section-title text-4xl font-bold text-center mb-12"><span class="text-green-400">05.</span> <span class="title-text">Certifications & Achievements</span></h3>
+            <div class="max-w-3xl mx-auto text-gray-300 bg-gray-800 p-8 rounded-lg shadow-xl border border-gray-700 box-style-nav">
+                <p class="mb-6">A selection of my professional certifications and notable achievements, demonstrating continuous learning and expertise across various domains:</p>
+                <ul class="space-y-4">
+                    <li class="cert-item border-b border-gray-700 pb-4 last:border-b-0 last:pb-0">
+                        <div class="cert-header cursor-pointer flex justify-between items-center text-white text-lg font-semibold hover:text-green-400 transition">
+                            <span>Accenture NA Coding: Dev & Advanced Engineering Job Simulation</span>
+                            <span class="text-sm text-gray-400">May 2025</span>
+                        </div>
+                        <div class="certification-details hidden mt-2 pl-4 text-gray-400">Issued by Forage.</div>
+                    </li>
+                    <li class="cert-item border-b border-gray-700 pb-4 last:border-b-0 last:pb-0">
+                        <div class="cert-header cursor-pointer flex justify-between items-center text-white text-lg font-semibold hover:text-green-400 transition">
+                            <span>AWS APAC Solutions Architecture Job Simulation</span>
+                            <span class="text-sm text-gray-400">Jan 2025</span>
+                        </div>
+                        <div class="certification-details hidden mt-2 pl-4 text-gray-400">Issued by Forage.</div>
+                    </li>
+                    <li class="cert-item border-b border-gray-700 pb-4 last:border-b-0 last:pb-0">
+                        <div class="cert-header cursor-pointer flex justify-between items-center text-white text-lg font-semibold hover:text-green-400 transition">
+                            <span>Goldman Sachs Software Engineering Virtual Experience</span>
+                            <span class="text-sm text-gray-400">Jan 2025</span>
+                        </div>
+                        <div class="certification-details hidden mt-2 pl-4 text-gray-400">Issued by Forage.</div>
+                    </li>
+                    <li class="cert-item border-b border-gray-700 pb-4 last:border-b-0 last:pb-0">
+                        <div class="cert-header cursor-pointer flex justify-between items-center text-white text-lg font-semibold hover:text-green-400 transition">
+                            <span>Agnirva Space Internship Program Certificate</span>
+                            <span class="text-sm text-gray-400">Nov 2024</span>
+                        </div>
+                        <div class="certification-details hidden mt-2 pl-4 text-gray-400">Issued by Agnirva.</div>
+                    </li>
+                    <li class="cert-item border-b border-gray-700 pb-4 last:border-b-0 last:pb-0">
+                        <div class="cert-header cursor-pointer flex justify-between items-center text-white text-lg font-semibold hover:text-green-400 transition">
+                            <span>The Big Biz Theory 2025 - Runner Up</span>
+                            <span class="text-sm text-gray-400">2025</span>
+                        </div>
+                        <div class="certification-details hidden mt-2 pl-4 text-gray-400">Organized by IITM in association with Traya Health.</div>
+                    </li>
+                    <li class="cert-item border-b border-gray-700 pb-4 last:border-b-0 last:pb-0">
+                        <div class="cert-header cursor-pointer flex justify-between items-center text-white text-lg font-semibold hover:text-green-400 transition">
+                            <span>Unstop Talent Park 2025 - Runner Up</span>
+                            <span class="text-sm text-gray-400">2025</span>
+                        </div>
+                        <div class="certification-details hidden mt-2 pl-4 text-gray-400">Issued by Unstop.</div>
+                    </li>
+                    <li class="cert-item border-b border-gray-700 pb-4 last:border-b-0 last:pb-0">
+                        <div class="cert-header cursor-pointer flex justify-between items-center text-white text-lg font-semibold hover:text-green-400 transition">
+                            <span>DebugIT - Runner Up</span>
+                            <span class="text-sm text-gray-400">Feb 2025</span>
+                        </div>
+                        <div class="certification-details hidden mt-2 pl-4 text-gray-400">Organized by IIT (BHU) VARANASI.</div>
+                    </li>
+                    <li class="cert-item border-b border-gray-700 pb-4 last:border-b-0 last:pb-0">
+                        <div class="cert-header cursor-pointer flex justify-between items-center text-white text-lg font-semibold hover:text-green-400 transition">
+                            <span>Professional Diploma in Project Management</span>
+                            <span class="text-sm text-gray-400">Nov 2024</span>
+                        </div>
+                        <div class="certification-details hidden mt-2 pl-4 text-gray-400">Issued by Udemy.</div>
+                    </li>
+                    <li class="cert-item border-b border-gray-700 pb-4 last:border-b-0 last:pb-0">
+                        <div class="cert-header cursor-pointer flex justify-between items-center text-white text-lg font-semibold hover:text-green-400 transition">
+                            <span>B2B SaaS Best Practices</span>
+                            <span class="text-sm text-gray-400">Nov 2024</span>
+                        </div>
+                        <div class="certification-details hidden mt-2 pl-4 text-gray-400">Issued by Udemy.</div>
+                    </li>
+                    <li class="cert-item border-b border-gray-700 pb-4 last:border-b-0 last:pb-0">
+                        <div class="cert-header cursor-pointer flex justify-between items-center text-white text-lg font-semibold hover:text-green-400 transition">
+                            <span>Executive Diploma in Business Presenting Skills</span>
+                            <span class="text-sm text-gray-400">Nov 2024</span>
+                        </div>
+                        <div class="certification-details hidden mt-2 pl-4 text-gray-400">Issued by Udemy.</div>
+                    </li>
+                    <li class="cert-item border-b border-gray-700 pb-4 last:border-b-0 last:pb-0">
+                        <div class="cert-header cursor-pointer flex justify-between items-center text-white text-lg font-semibold hover:text-green-400 transition">
+                            <span>Public Speaking: You Can be a Great Speaker within 24 Hours</span>
+                            <span class="text-sm text-gray-400">Nov 2024</span>
+                        </div>
+                        <div class="certification-details hidden mt-2 pl-4 text-gray-400">Issued by Udemy.</div>
+                    </li>
+                    <li class="cert-item border-b border-gray-700 pb-4 last:border-b-0 last:pb-0">
+                        <div class="cert-header cursor-pointer flex justify-between items-center text-white text-lg font-semibold hover:text-green-400 transition">
+                            <span>Cold Email Lead Generation Guide</span>
+                            <span class="text-sm text-gray-400">Dec 2024</span>
+                        </div>
+                        <div class="certification-details hidden mt-2 pl-4 text-gray-400">Issued by Udemy.</div>
+                    </li>
+                    <li class="cert-item border-b border-gray-700 pb-4 last:border-b-0 last:pb-0">
+                        <div class="cert-header cursor-pointer flex justify-between items-center text-white text-lg font-semibold hover:text-green-400 transition">
+                            <span>Professional Certificate: Digital Business & Unit Economics</span>
+                            <span class="text-sm text-gray-400">May 2024</span>
+                        </div>
+                        <div class="certification-details hidden mt-2 pl-4 text-gray-400">Issued by Forage.</div>
+                    </li>
+                    <li class="cert-item border-b border-gray-700 pb-4 last:border-b-0 last:pb-0">
+                        <div class="cert-header cursor-pointer flex justify-between items-center text-white text-lg font-semibold hover:text-green-400 transition">
+                            <span>Executive Diploma in General Management</span>
+                            <span class="text-sm text-gray-400">May 2024</span>
+                        </div>
+                        <div class="certification-details hidden mt-2 pl-4 text-gray-400">Issued by Udemy.</div>
+                    </li>
+                    <li class="cert-item border-b border-gray-700 pb-4 last:border-b-0 last:pb-0">
+                        <div class="cert-header cursor-pointer flex justify-between items-center text-white text-lg font-semibold hover:text-green-400 transition">
+                            <span>Adobe Photoshop CC For Absolute Beginner to Advanced</span>
+                            <span class="text-sm text-gray-400">May 2024</span>
+                        </div>
+                        <div class="certification-details hidden mt-2 pl-4 text-gray-400">Issued by Udemy.</div>
+                    </li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact" class="py-20 md:py-32 container mx-auto px-6 scroll-mt-24">
+            <h3 class="section-title text-4xl font-bold text-center mb-12"><span class="text-green-400">07.</span> <span class="title-text">Get In Touch</span></h3>
+            <div class="max-w-xl mx-auto text-lg text-gray-300 mb-8 box-style-nav p-8 rounded-lg shadow-xl border border-gray-700">
+                <p>I'm currently seeking new opportunities and welcome any inquiries or collaborations. Feel free to reach out!</p>
+            </div>
+            <a href="mailto:22JE0606@IITISM.AC.IN" class="block mx-auto main-button text-white px-8 py-4 rounded-lg text-lg font-semibold transition shadow-lg w-fit">Say Hello!</a>
+        </section>
+
+    </main>
+
+    <footer class="bg-gray-900 text-gray-500 mt-20 py-10 text-center border-t border-gray-800">
+        <div class="container mx-auto px-6">
+            <p>&copy; 2025 Naman Meena. All Rights Reserved.</p>
+            <p class="text-sm mt-2">Designed and Developed with passion.</p>
+        </div>
+    </footer>
+
+    <div id="projectModal" class="modal-overlay fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 opacity-0 pointer-events-none z-50">
+        <div class="modal-content rounded-xl shadow-2xl w-full max-w-2xl transform scale-95 transition-transform duration-300">
+            <div class="p-8">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 id="modalTitle" class="text-2xl font-bold text-white"></h3>
+                    <button id="closeModal" class="text-gray-400 text-3xl leading-none hover:text-green-400 transition">&times;</button>
+                </div>
+                <div id="modalDescription" class="text-gray-300 space-y-4 mb-6"></div>
+                <button id="generateDetailsBtn" class="main-button text-white px-5 py-2 rounded-lg transition shadow-lg flex items-center justify-center space-x-2">
+                    <span id="generateButtonText">✨ Generate More Details</span>
+                    <div id="projectSpinner" class="spinner hidden"></div>
+                </button>
+                <div id="generatedContent" class="text-gray-300 space-y-4 mt-6 p-4 bg-gray-700 rounded-lg hidden min-h-[100px] relative">
+                    <h4 class="font-semibold text-white mb-2">AI-Generated Details:</h4>
+                    <p id="aiDescription"></p>
+                    <div id="aiDescriptionSpinner" class="spinner hidden absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"></div>
+                </div>
+                <div class="mt-6">
+                    <h4 class="font-semibold text-white mb-3">Technologies Used:</h4>
+                    <div id="modalTech" class="flex flex-wrap gap-2"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Data Store for Project Details
+        const projectDetails = {
+            travelApp: {
+                title: "Mobile App for Intercity Travel",
+                description: "<p>This project involved architecting and developing a full-featured intercity travel application from the ground up using Flutter and Dart. A key feature is the integration of the Google Maps API for live, real-time map tracking of vehicles.</p><p>I implemented dynamic routing algorithms to suggest optimal paths and built secure user authentication systems to handle diverse user roles and ensure data integrity. The app also includes scalable booking functionalities, with transaction flows optimized for efficiency and a seamless user experience.</p>",
+                technologies: ["Flutter", "Dart", "Google Maps API", "Firebase Auth"]
+            },
+            bankingSystem: {
+                title: "Banking System",
+                description: "<p>I engineered a secure and robust backend system designed for comprehensive account management and transaction processing. The core logic was built with Python, while MySQL was used for reliable, relational data storage.</p><p>A major focus was on automating critical banking workflows and integrating ACID-compliant transaction mechanisms. This approach significantly enhanced system reliability and led to a measured 80% reduction in processing errors compared to previous manual methods.</p>",
+                technologies: ["Python", "MySQL", "ACID Compliance", "System Design"]
+            },
+            dataPipeline: {
+                title: "Healthcare Data Quality Assurance Pipeline",
+                description: "<p>This project, available on my GitHub, demonstrates my skills in data engineering and quality assurance. I designed and implemented a scalable data pipeline using Python to process healthcare datasets.</p><p>The pipeline automatically identifies, flags, and rectifies data anomalies, inconsistencies, and missing values. This process significantly improves data reliability, making the datasets more suitable for training accurate analytical and machine learning models.</p>",
+                technologies: ["Python", "Pandas", "NumPy", "Data Quality"]
+            },
+            githubGames: {
+                title: "Go-kart Game (GitHub)",
+                description: "<p>Developed a public Go-kart game, showcasing applied knowledge of game development principles, physics simulation, and interactive UI design. This project was built using Python and a game library like Pygame, demonstrating foundational skills in creating interactive software.</p>",
+                technologies: ["Python", "Game Development", "Pygame (example)"]
+            },
+            githubMedicalTriage: {
+                title: "Medical Triage System (GitHub)",
+                description: "<p>Created a public medical triage system using Python. This project highlights my problem-solving abilities in algorithm design and logical decision-making for assessing healthcare scenarios. It's a command-line based application that guides users through a series of questions to suggest a preliminary course of action based on reported symptoms.</p>",
+                technologies: ["Python", "Algorithm Design", "Problem Solving"]
+            }
+        };
+
+        // Header scroll effect
+        window.addEventListener('scroll', () => {
+            const header = document.getElementById('mainHeader');
+            if (header) { // Null check for header
+                if (window.scrollY > 50) {
+                    header.classList.add('header-scrolled');
+                } else {
+                    header.classList.remove('header-scrolled');
+                }
+            }
+        });
+
+        // Typing Effect for Hero Section (continuous loop)
+        const typingTextElement = document.getElementById('typing-text');
+        const phrases = ["A Software Engineer.", "A Backend Developer.", "A Machine Learning Engineer.", "A Systems Thinker."];
+        let heroPhraseIndex = 0;
+        let heroCharIndex = 0;
+        let heroIsDeleting = false;
+
+        function typeHeroText() {
+            if (!typingTextElement) return; // Null check for typingTextElement
+
+            const currentPhrase = phrases[heroPhraseIndex];
+            if (heroIsDeleting) {
+                typingTextElement.textContent = currentPhrase.substring(0, heroCharIndex - 1);
+                heroCharIndex--;
+            } else {
+                typingTextElement.textContent = currentPhrase.substring(0, heroCharIndex + 1);
+                heroCharIndex++;
+            }
+
+            if (!heroIsDeleting && heroCharIndex === currentPhrase.length) {
+                setTimeout(() => heroIsDeleting = true, 1500);
+            } else if (heroIsDeleting && heroCharIndex === 0) {
+                heroIsDeleting = false;
+                heroPhraseIndex = (heroPhraseIndex + 1) % phrases.length;
+            }
+
+            const typingSpeed = heroIsDeleting ? 75 : 150;
+            setTimeout(typeHeroText, typingSpeed);
+        }
+        document.addEventListener('DOMContentLoaded', typeHeroText);
+
+
+        // Active Navigation Link Highlighting
+        const navLinks = document.querySelectorAll('.nav-link');
+        const sections = document.querySelectorAll('main section');
+
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                if (window.scrollY >= sectionTop - sectionHeight / 3) { // Adjust sensitivity
+                    current = section.getAttribute('id');
+                }
+            });
+
+            navLinks.forEach(link => {
+                link.classList.remove('text-green-400');
+                if (link.getAttribute('href').includes(current)) {
+                    link.classList.add('text-green-400');
+                }
+            });
+        });
+
+        // Skills Chart
+        const ctx = document.getElementById('skillsChart');
+        let skillsChart; // Declare chart variable globally
+
+        const updateChartColors = () => {
+            const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+            const colors = {
+                python: isLight ? 'rgba(255, 140, 0, 0.7)' : 'rgba(102, 231, 183, 0.7)',
+                java: isLight ? 'rgba(255, 120, 0, 0.7)' : 'rgba(52, 211, 153, 0.7)',
+                dart: isLight ? 'rgba(255, 100, 0, 0.7)' : 'rgba(16, 185, 129, 0.7)',
+                sql: isLight ? 'rgba(255, 80, 0, 0.7)' : 'rgba(5, 150, 105, 0.7)',
+                c: isLight ? 'rgba(255, 60, 0, 0.7)' : 'rgba(10, 100, 70, 0.7)',
+                htmlcss: isLight ? 'rgba(255, 40, 0, 0.7)' : 'rgba(15, 70, 40, 0.7)',
+                cpp: isLight ? 'rgba(255, 20, 0, 0.7)' : 'rgba(0, 128, 0, 0.7)',
+                grid: isLight ? '#e0e0e0' : '#30363d',
+                ticks: isLight ? '#333333' : '#c9d1d9',
+                title: isLight ? '#1a1a1a' : '#e6edf3'
+            };
+            return colors;
+        };
+
+        const createOrUpdateChart = () => {
+            if (!ctx) return; // Null check for canvas context
+
+            const chartColors = updateChartColors();
+            const data = {
+                labels: ['Python', 'Java', 'Dart', 'SQL', 'C', 'HTML/CSS', 'C++'],
+                datasets: [{
+                    label: 'Proficiency',
+                    data: [80, 80, 85, 85, 75, 80, 90],
+                    backgroundColor: [
+                        chartColors.python,
+                        chartColors.java,
+                        chartColors.dart,
+                        chartColors.sql,
+                        chartColors.c,
+                        chartColors.htmlcss,
+                        chartColors.cpp
+                    ],
+                    borderColor: [
+                        chartColors.python.replace('0.7', '1'),
+                        chartColors.java.replace('0.7', '1'),
+                        chartColors.dart.replace('0.7', '1'),
+                        chartColors.sql.replace('0.7', '1'),
+                        chartColors.c.replace('0.7', '1'),
+                        chartColors.htmlcss.replace('0.7', '1'),
+                        chartColors.cpp.replace('0.7', '1')
+                    ],
+                    borderWidth: 1
+                }]
+            };
+
+            const options = {
+                maintainAspectRatio: false,
+                responsive: true,
+                indexAxis: 'y',
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        enabled: true,
+                        backgroundColor: chartColors.title, /* Use title color for tooltip background */
+                        titleColor: chartColors.grid, /* Use grid color for tooltip title */
+                        bodyColor: chartColors.grid, /* Use grid color for tooltip body */
+                        borderColor: chartColors.grid,
+                        borderWidth: 1,
+                        displayColors: false,
+                    },
+                    title: {
+                        display: true,
+                        text: 'Programming Language Proficiency',
+                        color: chartColors.title
+                    }
+                },
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        max: 100,
+                        grid: {
+                            color: chartColors.grid
+                        },
+                        ticks: {
+                            color: chartColors.ticks
+                        }
+                    },
+                    y: {
+                        grid: {
+                            color: chartColors.grid
+                        },
+                        ticks: {
+                            color: chartColors.ticks,
+                            callback: function(value, index, ticks) {
+                                const label = this.getLabelForValue(value);
+                                return label.length > 16 ? label.split(' ').join('\n') : label;
+                            }
+                        }
+                    }
+                }
+            };
+
+            if (skillsChart) {
+                skillsChart.data = data;
+                skillsChart.options = options;
+                skillsChart.update();
+            } else {
+                skillsChart = new Chart(ctx.getContext('2d'), { type: 'bar', data, options });
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded', createOrUpdateChart);
+
+
+        // Experience Timeline Accordion
+        document.querySelectorAll('.experience-header').forEach(item => {
+            item.addEventListener('click', event => {
+                const details = item.nextElementSibling;
+                if (details) { // Null check for details
+                    details.classList.toggle('active');
+                    details.classList.toggle('hidden');
+                }
+            });
+        });
+
+        // Certifications Accordion
+        document.querySelectorAll('.cert-header').forEach(item => {
+            item.addEventListener('click', event => {
+                const details = item.nextElementSibling;
+                if (details) { // Null check for details
+                    details.classList.toggle('active');
+                    details.classList.toggle('hidden');
+                }
+            });
+        });
+
+        // Project Modal Logic
+        const modal = document.getElementById('projectModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalDescription = document.getElementById('modalDescription');
+        const modalTech = document.getElementById('modalTech');
+        const closeModalBtn = document.getElementById('closeModal');
+        let currentProjectId = null;
+
+        document.querySelectorAll('.project-card').forEach(card => {
+            card.addEventListener('click', () => {
+                currentProjectId = card.dataset.project;
+                const data = projectDetails[currentProjectId];
+
+                if (modalTitle) modalTitle.textContent = data.title;
+                if (modalDescription) modalDescription.innerHTML = data.description;
+                
+                if (modalTech) {
+                    modalTech.innerHTML = '';
+                    data.technologies.forEach(tech => {
+                        const span = document.createElement('span');
+                        span.className = 'bg-gray-700 text-green-400 px-2.5 py-0.5 rounded';
+                        span.textContent = tech;
+                        modalTech.appendChild(span);
+                    });
+                }
+
+                if (modal) { // Null check for modal
+                    modal.classList.remove('opacity-0', 'pointer-events-none');
+                    const modalContent = modal.querySelector('.modal-content');
+                    if (modalContent) { // Null check for modalContent
+                        modalContent.classList.remove('scale-95');
+                        modalContent.classList.add('scale-100');
+                    }
+                }
+            });
+        });
+
+        function closeModal() {
+            if (modal) { // Null check for modal
+                modal.classList.add('opacity-0', 'pointer-events-none');
+                const modalContent = modal.querySelector('.modal-content');
+                if (modalContent) { // Null check for modalContent
+                    modalContent.classList.remove('scale-100');
+                    modalContent.classList.add('scale-95');
+                }
+            }
+        }
+
+        if (closeModalBtn) { // Null check for closeModalBtn
+            closeModalBtn.addEventListener('click', closeModal);
+        }
+        if (modal) { // Null check for modal
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    closeModal();
+                }
+            });
+        }
+
+        // Theme Toggle Logic
+        const themeToggleBtn = document.getElementById('themeToggle');
+        const htmlElement = document.documentElement;
+        const darkIcon = document.querySelector('.dark-icon');
+        const lightIcon = document.querySelector('.light-icon');
+
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme) {
+            htmlElement.setAttribute('data-theme', savedTheme);
+            if (savedTheme === 'light') {
+                if (darkIcon) darkIcon.classList.add('hidden');
+                if (lightIcon) lightIcon.classList.remove('hidden');
+            } else {
+                if (darkIcon) darkIcon.classList.remove('hidden');
+                if (lightIcon) lightIcon.classList.add('hidden');
+            }
+        } else {
+            // Default to dark mode if no theme is saved
+            htmlElement.setAttribute('data-theme', 'dark');
+            if (darkIcon) darkIcon.classList.remove('hidden');
+            if (lightIcon) lightIcon.classList.add('hidden');
+        }
+
+        if (themeToggleBtn) { // Null check for themeToggleBtn
+            themeToggleBtn.addEventListener('click', () => {
+                if (htmlElement.getAttribute('data-theme') === 'dark') {
+                    htmlElement.setAttribute('data-theme', 'light');
+                    localStorage.setItem('theme', 'light');
+                    if (darkIcon) darkIcon.classList.add('hidden');
+                    if (lightIcon) lightIcon.classList.remove('hidden');
+                } else {
+                    htmlElement.setAttribute('data-theme', 'dark');
+                    localStorage.setItem('theme', 'dark');
+                    if (darkIcon) darkIcon.classList.remove('hidden');
+                    if (lightIcon) lightIcon.classList.add('hidden');
+                }
+                createOrUpdateChart(); // Update chart colors on theme change
+            });
+        }
+    </script>
+</body>
+</html>
