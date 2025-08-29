@@ -314,52 +314,46 @@
             font-weight: 600;
         }
 
-        /* Header Social Links - Initial state (icon only) */
+        /* Header Social Links - Default state (always showing icon + text, no expand/shrink) */
         .header-social-link {
             opacity: 1; /* Always visible */
-            width: 2.5rem; /* Fixed width for icon */
-            height: 2.5rem; /* Fixed height for icon */
-            overflow: hidden; /* Hide text initially */
+            width: auto; /* Allow width to be determined by content */
+            height: auto; /* Allow height to be determined by content */
+            overflow: visible; /* Ensure all content is visible */
             white-space: nowrap;
             text-align: left; /* Align content to the left */
-            padding: 0.25rem; /* Padding to ensure image has some space inside the button */
-            transition: width 0.3s ease, background-color 0.3s ease, transform 0.2s ease, padding 0.3s ease; /* Added padding to transition */
+            padding: 0.5rem 1rem; /* Consistent padding around icon and text */
             display: flex; /* Use flex to align image and text */
             align-items: center;
-            justify-content: center; /* Center the image initially */
+            justify-content: flex-start; /* Align image and text to start */
             gap: 0.5rem; /* Space between image and text */
             background-color: transparent !important; /* Make background transparent by default */
+            transition: background-color 0.3s ease, transform 0.2s ease; /* Only transition background and transform on hover */
         }
 
-        /* Header Social Links - Hover state (expand) */
+        /* Header Social Links - Hover state (only background and scale change, no size change) */
         .header-social-link:hover {
-            width: auto; /* Allow width to be auto for expanded content */
             background-color: var(--social-hover-bg) !important; /* Apply background color on hover */
             transform: scale(1.05); /* Subtle scale up on hover */
-            justify-content: flex-start; /* Align image and text to start on hover */
-            padding-left: 0.5rem; /* Add padding on hover to separate image from text */
-            padding-right: 0.5rem; /* Add padding on hover */
+            /* No changes to width, height, overflow, justify-content, padding on hover */
         }
-        .header-social-link img { /* Styling for the new image icons */
+        .header-social-link img { /* Styling for the image icons */
             width: 1.5rem; /* Fixed width for the image */
             height: 1.5rem; /* Fixed height for the image */
             object-fit: contain; /* Ensure image is contained without distortion */
             flex-shrink: 0; /* Prevent image from shrinking */
-            opacity: 1; /* Ensure image is visible in collapsed state */
-            transition: opacity 0.3s ease; /* Smooth transition for image opacity */
+            opacity: 1; /* Ensure image is always visible */
+            padding: 0; /* No padding on the image itself */
         }
         /* No specific invert for light mode needed */
 
 
         .header-social-link span:last-child { /* Text part */
-            opacity: 0; /* Hidden by default */
-            transition: opacity 0.3s ease;
+            opacity: 1; /* Always visible */
             font-size: 1rem; /* Size for the text */
             color: var(--text-primary); /* Ensure text color is visible */
         }
-        .header-social-link:hover span:last-child {
-            opacity: 1; /* Visible on hover */
-        }
+        /* No hover styles for span:last-child needed as it's always visible */
 
 
         /* Project Card Styling */
@@ -1715,5 +1709,3 @@
     </script>
 </body>
 </html>
-
-
