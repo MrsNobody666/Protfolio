@@ -56,7 +56,7 @@
             --bottom-nav-shadow: 0 2px 8px rgba(0,0,0,0.15);
 
             /* Project Card Specific Variables (Dark Mode) */
-            --project-card-bg: var(--bg-secondary); /* Reverted to neutral background */
+            --project-card-bg: var(--bg-secondary); /* Neutral gray for cards */
             --project-card-hover-bg: #2d3748; /* Slightly lighter gray on hover */
         }
 
@@ -307,15 +307,44 @@
             font-weight: 600;
         }
 
-        /* Header Social Links - Initially hidden */
+        /* Header Social Links - Initial state (icon only) */
         .header-social-link {
-            opacity: 0;
+            opacity: 1; /* Always visible */
+            width: 2.5rem; /* Fixed width for icon */
+            overflow: hidden;
+            white-space: nowrap;
+            text-align: left;
+            padding: 0.5rem; /* Adjust padding for icon */
+            transition: width 0.3s ease, background-color 0.3s ease, transform 0.2s ease;
+            display: flex; /* Use flex to align icon and text */
+            align-items: center;
+            justify-content: flex-start; /* Align icon to start */
+            gap: 0.5rem; /* Space between icon and text */
+        }
+
+        /* Header Social Links - Hover state (expand) */
+        .header-social-link:hover {
+            width: 8rem; /* Expanded width to show text */
+            background-color: var(--social-hover-bg); /* Use theme variable for hover */
+            transform: scale(1.05); /* Subtle scale up on hover */
+        }
+        .header-social-link img { /* Styling for the new image icons */
+            width: 1.25rem; /* Adjust size as needed */
+            height: 1.25rem;
+            object-fit: contain;
+            /* No invert needed as images are already correctly colored */
+        }
+        /* No specific invert for light mode needed */
+
+
+        .header-social-link span:last-child { /* Text part */
+            opacity: 0; /* Hidden by default */
             transition: opacity 0.3s ease;
         }
-        /* Header Social Links - Visible when scrolled */
-        .header-social-link.visible {
-            opacity: 1;
+        .header-social-link:hover span:last-child {
+            opacity: 1; /* Visible on hover */
         }
+
 
         /* Project Card Styling */
         .project-card {
@@ -335,11 +364,11 @@
         }
         /* Ensure other text within the card also contrasts */
         .project-card p {
-            color: var(--text-secondary); /* Use secondary text color for descriptions */
+            color: var(--text-primary); /* Use primary text color for descriptions */
         }
         .project-card .flex.flex-wrap.gap-2 span { /* For the tech tags */
-            background-color: var(--bg-secondary); /* Use secondary background for tags */
-            border: 1px solid var(--border-color); /* Add a subtle border */
+            background-color: rgba(0, 0, 0, 0.1); /* Slightly transparent dark for tags */
+            border: 1px solid rgba(0, 0, 0, 0.2); /* Add a subtle darker border */
             color: var(--text-primary); /* Primary text color for tags */
         }
 
@@ -405,9 +434,13 @@
             .header-social-link {
                 padding: 0.5rem 0.75rem; /* Make social buttons more compact */
                 font-size: 0.875rem; /* Smaller font size for social links */
+                width: auto; /* Allow width to be auto on mobile for better fit */
+                overflow: visible; /* Allow text to be visible */
+                text-align: center; /* Center text on mobile */
+                justify-content: center; /* Center content on mobile */
             }
-            .header-social-link span:first-child { /* Emoji */
-                font-size: 1rem; /* Smaller emoji */
+            .header-social-link span:last-child { /* Text part */
+                opacity: 1; /* Always visible on mobile */
             }
 
             #themeToggle {
@@ -460,10 +493,10 @@
         <div class="flex items-center space-x-4 md:space-x-4">
             <!-- GitHub and LinkedIn links will be dynamically shown/hidden -->
             <a href="https://github.com/MrsNobody666" target="_blank" class="header-social-link github-button text-white px-4 py-2 rounded-lg transition shadow-lg flex items-center space-x-2">
-                <span class="text-xl">🐙</span><span>GitHub</span>
+                <img src="uploaded:images.png-a6cb9be1-16c7-4bd0-9d4c-bdf59fcec826" alt="GitHub Icon" width="20" height="20"><span>GitHub</span>
             </a>
             <a href="https://linkedin.com/in/naman-meena-a48492258" target="_blank" class="header-social-link linkedin-button text-white px-4 py-2 rounded-lg transition shadow-lg flex items-center space-x-2">
-                <span class="text-xl">💼</span><span>LinkedIn</span>
+                <img src="uploaded:images (1).png-5a8a8499-5f6e-41d1-a94f-31873ff41169" alt="LinkedIn Icon" width="20" height="20"><span>LinkedIn</span>
             </a>
             <button id="themeToggle" class="text-gray-400 hover:text-green-400 transition p-2 rounded-full focus:outline-none focus:ring-2 focus:ring-green-400">
                 <span class="dark-icon">🌙</span>
@@ -904,7 +937,7 @@
                     <span id="generateButtonText">✨ Generate More Details</span>
                     <div id="projectSpinner" class="spinner hidden"></div>
                 </button>
-                <div id="generatedContent" class="text-gray-300 space-y-4 mt-6 p-4 bg-gray-700 rounded-lg hidden min-h-[100px] relative">
+                <div id="generatedContent" class="text-gray-300 space-y-4 mt-6 p-4 bg-gray-700 rounded-lg hidden">
                     <h4 class="font-semibold text-white mb-2">AI Feedback:</h4>
                     <p id="aiDescription"></p>
                     <div id="aiDescriptionSpinner" class="spinner hidden absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"></div>
