@@ -319,29 +319,30 @@
             opacity: 1; /* Always visible */
             width: 2.5rem; /* Fixed width for icon */
             height: 2.5rem; /* Fixed height for icon */
-            overflow: hidden;
+            overflow: hidden; /* Hide text initially */
             white-space: nowrap;
-            text-align: left;
-            padding: 0.25rem; /* Adjusted padding to fit image better */
-            transition: width 0.3s ease, background-color 0.3s ease, transform 0.2s ease;
-            display: flex; /* Use flex to align icon and text */
+            text-align: left; /* Align content to the left */
+            padding: 0.25rem; /* Padding to ensure image has some space inside the button */
+            transition: width 0.3s ease, background-color 0.3s ease, transform 0.2s ease, padding 0.3s ease; /* Added padding to transition */
+            display: flex; /* Use flex to align image and text */
             align-items: center;
             justify-content: center; /* Center the image initially */
             gap: 0.5rem; /* Space between image and text */
+            background-color: transparent !important; /* Make background transparent by default */
         }
 
         /* Header Social Links - Hover state (expand) */
         .header-social-link:hover {
-            width: 8rem; /* Expanded width to show text */
-            background-color: var(--social-hover-bg); /* Use theme variable for hover */
+            width: auto; /* Allow width to be auto for expanded content */
+            background-color: var(--social-hover-bg) !important; /* Apply background color on hover */
             transform: scale(1.05); /* Subtle scale up on hover */
             justify-content: flex-start; /* Align image and text to start on hover */
             padding-left: 0.5rem; /* Add padding on hover to separate image from text */
             padding-right: 0.5rem; /* Add padding on hover */
         }
         .header-social-link img { /* Styling for the new image icons */
-            width: 100%; /* Fill 100% of the parent's width */
-            height: 100%; /* Fill 100% of the parent's height */
+            width: 1.5rem; /* Fixed width for the image */
+            height: 1.5rem; /* Fixed height for the image */
             object-fit: contain; /* Ensure image is contained without distortion */
             flex-shrink: 0; /* Prevent image from shrinking */
         }
@@ -352,6 +353,7 @@
             opacity: 0; /* Hidden by default */
             transition: opacity 0.3s ease;
             font-size: 1rem; /* Size for the text */
+            color: var(--text-primary); /* Ensure text color is visible */
         }
         .header-social-link:hover span:last-child {
             opacity: 1; /* Visible on hover */
@@ -486,7 +488,7 @@
         <div class="flex items-center space-x-4 md:space-x-4">
             <!-- GitHub and LinkedIn links with image icons and hover effect -->
             <a href="https://github.com/MrsNobody666" target="_blank" class="header-social-link github-button text-white rounded-lg transition shadow-lg flex items-center space-x-2">
-                <img src="images.png" alt="GitHub Icon" width="24" height="24"><span>GitHub</span>
+                <img src="images.png " alt="GitHub Icon" width="24" height="24"><span>GitHub</span>
             </a>
             <a href="https://linkedin.com/in/naman-meena-a48492258" target="_blank" class="header-social-link linkedin-button text-white rounded-lg transition shadow-lg flex items-center space-x-2">
                 <img src="images (1).png" alt="LinkedIn Icon" width="24" height="24"><span>LinkedIn</span>
@@ -1480,7 +1482,7 @@
                     if (atsScoreOutput) atsScoreOutput.textContent = "Analyzing...";
                     if (summaryOutput) summaryOutput.textContent = "";
                     if (keywordSuggestionsOutput) keywordSuggestionsOutput.innerHTML = '';
-                    if (formattingSuggestionsOutput) formattingSuggestionsOutputOutput.innerHTML = '';
+                    if (formattingSuggestionsOutput) formattingSuggestionsOutput.innerHTML = '';
                     if (actionableFeedbackOutput) actionableFeedbackOutput.innerHTML = '';
 
 
