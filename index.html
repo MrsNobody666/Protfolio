@@ -336,6 +336,8 @@
             background-color: var(--social-hover-bg); /* Use theme variable for hover */
             transform: scale(1.05); /* Subtle scale up on hover */
             justify-content: flex-start; /* Align image and text to start on hover */
+            padding-left: 0.5rem; /* Add padding on hover to separate image from text */
+            padding-right: 0.5rem; /* Add padding on hover */
         }
         .header-social-link img { /* Styling for the new image icons */
             width: 100%; /* Fill 100% of the parent's width */
@@ -682,9 +684,9 @@
                         <h4 class="text-xl font-semibold">Healthcare Data Quality Pipeline</h4>
                         <p class="mb-4">A scalable Python-based data quality assurance pipeline for healthcare datasets.</p>
                         <div class="flex flex-wrap gap-2 text-sm font-mono">
-                            <span class="bg-gray-700 text-green-400 px-2.5 py-0.5 rounded">Python</span>
-                            <span class="bg-gray-700 text-green-400 px-2.5 py-0.5 rounded">Pandas</span>
-                            <span class="bg-gray-700 text-green-400 px-2.5 py-0.5 rounded">Data Quality</span>
+                            <span class="bg-gray-700 text-green-400 px-2.5 py-0.5 rounded">Flutter</span>
+                            <span class="bg-gray-700 text-green-400 px-2.5 py-0.5 rounded">Dart</span>
+                            <span class="bg-gray-700 text-green-400 px-2.5 py-0.5 rounded">Google Maps API</span>
                         </div>
                     </div>
                 </div>
@@ -1323,7 +1325,7 @@
 
                     const success = await callGeminiApi(prompt, aiDescriptionPara, aiDescriptionSpinner, generateDetailsBtn);
                     
-                    if (aiDescriptionSpinner) aiDescriptionSpinner.classList.add('hidden');
+                    if (aiDescriptionSpinner) explanationSpinner.classList.add('hidden');
                     if (success) {
                         if (generateButtonText) generateButtonText.textContent = '✨ Generated!';
                         if (generatedContentDiv) generatedContentDiv.classList.remove('hidden'); // Show content after generation
@@ -1478,7 +1480,7 @@
                     if (atsScoreOutput) atsScoreOutput.textContent = "Analyzing...";
                     if (summaryOutput) summaryOutput.textContent = "";
                     if (keywordSuggestionsOutput) keywordSuggestionsOutput.innerHTML = '';
-                    if (formattingSuggestionsOutput) formattingSuggestionsOutput.innerHTML = '';
+                    if (formattingSuggestionsOutput) formattingSuggestionsOutputOutput.innerHTML = '';
                     if (actionableFeedbackOutput) actionableFeedbackOutput.innerHTML = '';
 
 
