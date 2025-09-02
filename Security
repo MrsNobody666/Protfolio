@@ -1,0 +1,22 @@
+Security Policy and Contact Information
+
+# This file provides information about the security policy for this website
+# and contact details for reporting security vulnerabilities.
+
+# Contact Information for Security Reports
+Contact: mailto:security@namanmeena.dev
+Expires: 2025-12-31T23:59:59.000Z
+Preferred-Languages: en
+Canonical: https://naman-meena.netlify.app/.well-known/security.txt
+
+# Security Policy
+Policy: https://naman-meena.netlify.app/security-policy
+
+# Encryption
+Encryption: https://naman-meena.netlify.app/.well-known/pgp-key.txt
+
+# Acknowledgments
+Acknowledgments: https://naman-meena.netlify.app/security-acknowledgments
+
+# Hiring
+Hiring: https://naman-meena.netlify.app/careers
